@@ -21,6 +21,8 @@ Doctrine database service providers for doctrine dbal and orm.
 
 ## Suggest
 
+ * doctrine/orm: ^2.5
+
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-doctrine-db-service-provider][1].
