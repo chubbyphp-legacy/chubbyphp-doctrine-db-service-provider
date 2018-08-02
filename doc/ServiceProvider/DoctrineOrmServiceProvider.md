@@ -69,8 +69,8 @@ composer require doctrine/orm "^2.5"
 ```php
 $container = new Container();
 
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineOrmServiceProvider()));
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineOrmServiceProvider()));
 
 $container['doctrine.dbal.db.options'] = [
     'connection' => [
@@ -99,8 +99,8 @@ $container['doctrine.orm.em.options'] = [
 ```php
 $container = new Container();
 
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineOrmServiceProvider()));
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineOrmServiceProvider()));
 
 $container['doctrine.dbal.dbs.options'] = [
     'mysql_read' => [

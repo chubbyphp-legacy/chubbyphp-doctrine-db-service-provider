@@ -55,7 +55,7 @@ Example: [Type::STRING => StringType::class]
 ```php
 $container = new Container();
 
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider()));
 
 $container['doctrine.dbal.db.options'] = [
     'connection' => [
@@ -72,7 +72,7 @@ $container['doctrine.dbal.db.options'] = [
 ```php
 $container = new Container();
 
-$container->register(new Chubbyphp\ServiceProvider\ServiceProvider\DoctrineDbalServiceProvider());
+$container->register(new Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider());
 
 $container['doctrine.dbal.dbs.options'] = [
     'mysql_read' => [
