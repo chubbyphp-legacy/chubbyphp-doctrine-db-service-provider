@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Logging\SQLLogger;
 
 /**
- * @link https://github.com/symfony/doctrine-bridge/blob/master/Logger/DbalLogger.php
+ * @see https://github.com/symfony/doctrine-bridge/blob/master/Logger/DbalLogger.php
  */
 final class DoctrineDbalLogger implements SQLLogger
 {

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @link https://github.com/doctrine/DoctrineBundle/blob/master/Command/DropDatabaseDoctrineCommand.php
+ * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/DropDatabaseDoctrineCommand.php
  */
 class DropDatabaseDoctrineCommand extends DoctrineCommand
 {

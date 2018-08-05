@@ -28,7 +28,7 @@ use Pimple\ServiceProviderInterface;
 
 /**
  * This provider is heavily inspired by
- * https://github.com/dflydev/dflydev-doctrine-orm-service-provider/blob/master/src/Dflydev/Provider/DoctrineOrm/DoctrineOrmServiceProvider.php
+ * https://github.com/dflydev/dflydev-doctrine-orm-service-provider/blob/master/src/Dflydev/Provider/DoctrineOrm/DoctrineOrmServiceProvider.php.
  */
 final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 {
