@@ -148,7 +148,7 @@ EOT
     {
         $connectionName = $input->getOption('connection');
 
-        if ('' !== $connectionName) {
+        if (null !== $connectionName) {
             return $connectionName;
         }
 
