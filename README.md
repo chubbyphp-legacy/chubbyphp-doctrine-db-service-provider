@@ -39,6 +39,8 @@ composer require chubbyphp/chubbyphp-doctrine-db-service-provider "~1.0"
 
 Dominik Zogg 2018
 
+There is some code with @link, copied with small modifications by from thirdparties.
+
 [1]: https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider
 
 [2]: doc/ServiceProvider/DoctrineDbalServiceProvider.md

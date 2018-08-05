@@ -16,6 +16,10 @@ use Doctrine\DBAL\Types\Type;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
+/**
+ * This provider is heavily inspired by
+ * https://github.com/silexphp/Silex-Providers/blob/master/DoctrineServiceProvider.php
+ */
 final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 {
     /**

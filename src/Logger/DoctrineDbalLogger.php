@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Fabien Potencier <fabien@symfony.com> (https://github.com/silexphp/Silex-Providers)
- */
-
 namespace Chubbyphp\DoctrineDbServiceProvider\Logger;
 
 use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Logging\SQLLogger;
 
+/**
+ * @link https://github.com/symfony/doctrine-bridge/blob/master/Logger/DbalLogger.php
+ */
 final class DoctrineDbalLogger implements SQLLogger
 {
     const MAX_STRING_LENGTH = 32;
