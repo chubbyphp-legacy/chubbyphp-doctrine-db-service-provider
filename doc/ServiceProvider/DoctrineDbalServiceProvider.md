@@ -5,7 +5,6 @@ The *DoctrineDbalServiceProvider* provides integration with the [Doctrine Dbal][
 ## Install
 
 ```sh
-composer require doctrine/cache "^1.6"
 composer require doctrine/dbal "^2.5"
 ```
 
