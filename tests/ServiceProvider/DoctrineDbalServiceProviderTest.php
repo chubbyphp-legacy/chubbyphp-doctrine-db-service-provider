@@ -2,12 +2,14 @@
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider\ServiceProvider;
 
-use Chubbyphp\Mock\MockByCallsTrait;
-use Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider;
 use Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger;
+use Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider;
+use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\Common\EventManager;
+use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\IntegerType;
@@ -16,7 +18,6 @@ use Doctrine\DBAL\Types\Type;
 use PHPUnit\Framework\TestCase;
 use Pimple\Container;
 use Psr\Log\LoggerInterface;
-use Doctrine\Common\Cache\FilesystemCache;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider
@@ -32,6 +33,7 @@ class DoctrineDbalServiceProviderTest extends TestCase
         $dbalServiceProvider = new DoctrineDbalServiceProvider();
         $dbalServiceProvider->register($container);
 
+        self::assertTrue($container->offsetExists('doctrine.dbal.connection_registry'));
         self::assertTrue($container->offsetExists('doctrine.dbal.db'));
         self::assertTrue($container->offsetExists('doctrine.dbal.db.config'));
         self::assertTrue($container->offsetExists('doctrine.dbal.db.default_options'));
@@ -41,6 +43,18 @@ class DoctrineDbalServiceProviderTest extends TestCase
         self::assertTrue($container->offsetExists('doctrine.dbal.dbs.event_manager'));
         self::assertTrue($container->offsetExists('doctrine.dbal.dbs.options.initializer'));
         self::assertTrue($container->offsetExists('doctrine.dbal.types'));
+
+        // start: doctrine.dbal.connection_registry
+        self::assertInstanceOf(ConnectionRegistry::class, $container['doctrine.dbal.connection_registry']);
+
+        /** @var ConnectionRegistry $managerRegistry */
+        $managerRegistry = $container['doctrine.dbal.connection_registry'];
+
+        self::assertSame('default', $managerRegistry->getDefaultConnectionName());
+        self::assertSame($container['doctrine.dbal.db'], $managerRegistry->getConnection());
+        self::assertSame($container['doctrine.dbal.db'], $managerRegistry->getConnections()['default']);
+        self::assertSame(['default'], $managerRegistry->getConnectionNames());
+        // end: doctrine.dbal.connection_registry
 
         // start: doctrine.dbal.db
         self::assertInstanceOf(Connection::class, $container['doctrine.dbal.db']);

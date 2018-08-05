@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chubbyphp\DoctrineDbServiceProvider\ServiceProvider;
 
 use Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger;
+use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineDbalConnectionRegistry;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
@@ -22,6 +23,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
+        $container['doctrine.dbal.connection_registry'] = $this->getDbConnectionRegistryDefintion($container);
         $container['doctrine.dbal.db'] = $this->getDbDefinition($container);
         $container['doctrine.dbal.db.cache_factory.apcu'] = $this->getDbApcuCacheFactoryDefinition($container);
         $container['doctrine.dbal.db.cache_factory.array'] = $this->getDbArrayCacheFactoryDefinition($container);
@@ -33,6 +35,18 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         $container['doctrine.dbal.dbs.event_manager'] = $this->getDbsEventManagerDefinition($container);
         $container['doctrine.dbal.dbs.options.initializer'] = $this->getDbsOptionsInitializerDefinition($container);
         $container['doctrine.dbal.types'] = [];
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return callable
+     */
+    private function getDbConnectionRegistryDefintion(Container $container): callable
+    {
+        return function ($container) {
+            return new DoctrineDbalConnectionRegistry($container);
+        };
     }
 
     /**

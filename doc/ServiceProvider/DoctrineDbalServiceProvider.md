@@ -44,6 +44,7 @@ Example: [Type::STRING => StringType::class]
 
 ## Services
 
+* **doctrine.dbal.connection_registry**: The connection registry, instance of `Doctrine\Common\Persistence\ConnectionRegistry`.
 * **doctrine.dbal.db**: The database connection, instance of `Doctrine\DBAL\Connection`.
 * **doctrine.dbal.db.config**: The doctrine configuration, instance of `Doctrine\DBAL\Configuration`.
 * **doctrine.dbal.db.event_manager**: The doctrine event manager, instance of  `Doctrine\Common\EventManager`.
