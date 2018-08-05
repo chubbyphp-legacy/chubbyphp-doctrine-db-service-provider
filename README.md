@@ -17,7 +17,6 @@ Doctrine database service providers for doctrine dbal and orm.
  * php: ~7.0
  * doctrine/cache: ^1.6
  * doctrine/dbal: ^2.5
- * psr/log: ~1.0
 
 ## Suggest
 
