@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chubbyphp\DoctrineDbServiceProvider\Command;
 
 use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,7 @@ class DropDatabaseDoctrineCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('doctrine:database:drop')
+            ->setName('dbal:database:drop')
             ->setDescription('Drops the configured database')
             ->addOption('shard', null, InputOption::VALUE_REQUIRED, 'The shard connection to use for this command')
             ->addOption('connection', null, InputOption::VALUE_OPTIONAL, 'The connection to use for this command')
@@ -73,35 +74,17 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $connectionName = $input->getOption('connection');
-        if (empty($connectionName)) {
-            $connectionName = $this->connectionRegistry->getDefaultConnectionName();
-        }
+        $connectionName = $this->getConnectionName($input);
 
         $connection = $this->connectionRegistry->getConnection($connectionName);
 
         $ifExists = $input->getOption('if-exists');
 
-        $params = $connection->getParams();
-        if (isset($params['master'])) {
-            $params = $params['master'];
-        }
+        $params = $this->getParams($connection);
 
-        if (isset($params['shards'])) {
-            $shards = $params['shards'];
-            // Default select global
-            $params = array_merge($params, $params['global']);
-            if ($input->getOption('shard')) {
-                foreach ($shards as $shard) {
-                    if ($shard['id'] === (int) $input->getOption('shard')) {
-                        // Select sharded database
-                        $params = $shard;
-                        unset($params['id']);
-                        break;
-                    }
-                }
-            }
-        }
+        // Cannot inject `shard` option in parent::getDoctrineConnection
+        // cause it will try to connect to a non-existing database
+        $params = $this->fixShardInformation($input, $params);
 
         $name = isset($params['path']) ? $params['path'] : (isset($params['dbname']) ? $params['dbname'] : false);
         if (!$name) {
@@ -178,5 +161,63 @@ EOT
         }
 
         return 0;
+    }
+
+    /**
+     * @param InputInterface $input
+     *
+     * @return string
+     */
+    private function getConnectionName(InputInterface $input): string
+    {
+        $connectionName = $input->getOption('connection');
+
+        if ('' !== $connectionName) {
+            return $connectionName;
+        }
+
+        return $this->connectionRegistry->getDefaultConnectionName();
+    }
+
+    /**
+     * @param Connection $connection
+     *
+     * @return array
+     */
+    private function getParams(Connection $connection): array
+    {
+        $params = $connection->getParams();
+        if (isset($params['master'])) {
+            $params = $params['master'];
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param array          $params
+     *
+     * @return array
+     */
+    private function fixShardInformation(InputInterface $input, array $params): array
+    {
+        if (isset($params['shards'])) {
+            $shards = $params['shards'];
+            // Default select global
+            $params = array_merge($params, $params['global']);
+            if ($input->getOption('shard')) {
+                foreach ($shards as $shard) {
+                    if ($shard['id'] === (int) $input->getOption('shard')) {
+                        // Select sharded database
+                        $params = $shard;
+                        unset($params['id']);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $params;
     }
 }

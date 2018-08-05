@@ -10,6 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Doctrine\DBAL\Connection;
 
 /**
  * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/CreateDatabaseDoctrineCommand.php
@@ -34,7 +35,7 @@ class CreateDatabaseDoctrineCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('doctrine:database:create')
+            ->setName('dbal:database:create')
             ->setDescription('Creates the configured database')
             ->addOption('shard', null, InputOption::VALUE_REQUIRED, 'The shard connection to use for this command')
             ->addOption('connection', null, InputOption::VALUE_OPTIONAL, 'The connection to use for this command')
@@ -64,38 +65,17 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $connectionName = $input->getOption('connection');
-        if (empty($connectionName)) {
-            $connectionName = $this->connectionRegistry->getDefaultConnectionName();
-        }
+        $connectionName = $this->getConnectionName($input);
 
         $connection = $this->connectionRegistry->getConnection($connectionName);
 
         $ifNotExists = $input->getOption('if-not-exists');
 
-        $params = $connection->getParams();
-        if (isset($params['master'])) {
-            $params = $params['master'];
-        }
+        $params = $this->getParams($connection);
 
         // Cannot inject `shard` option in parent::getDoctrineConnection
         // cause it will try to connect to a non-existing database
-        if (isset($params['shards'])) {
-            $shards = $params['shards'];
-            // Default select global
-            $params = array_merge($params, $params['global']);
-            unset($params['global']['dbname']);
-            if ($input->getOption('shard')) {
-                foreach ($shards as $i => $shard) {
-                    if ($shard['id'] === (int) $input->getOption('shard')) {
-                        // Select sharded database
-                        $params = array_merge($params, $shard);
-                        unset($params['shards'][$i]['dbname'], $params['id']);
-                        break;
-                    }
-                }
-            }
-        }
+        $params = $this->fixShardInformation($input, $params);
 
         $hasPath = isset($params['path']);
 
@@ -157,5 +137,64 @@ EOT
         $tmpConnection->close();
 
         return $error ? 1 : 0;
+    }
+
+    /**
+     * @param InputInterface $input
+     *
+     * @return string
+     */
+    private function getConnectionName(InputInterface $input): string
+    {
+        $connectionName = $input->getOption('connection');
+
+        if ('' !== $connectionName) {
+            return $connectionName;
+        }
+
+        return $this->connectionRegistry->getDefaultConnectionName();
+    }
+
+    /**
+     * @param Connection $connection
+     *
+     * @return array
+     */
+    private function getParams(Connection $connection): array
+    {
+        $params = $connection->getParams();
+        if (isset($params['master'])) {
+            $params = $params['master'];
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param array          $params
+     *
+     * @return array
+     */
+    private function fixShardInformation(InputInterface $input, array $params): array
+    {
+        if (isset($params['shards'])) {
+            $shards = $params['shards'];
+            // Default select global
+            $params = array_merge($params, $params['global']);
+            unset($params['global']['dbname']);
+            if ($input->getOption('shard')) {
+                foreach ($shards as $i => $shard) {
+                    if ($shard['id'] === (int) $input->getOption('shard')) {
+                        // Select sharded database
+                        $params = array_merge($params, $shard);
+                        unset($params['shards'][$i]['dbname'], $params['id']);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $params;
     }
 }
