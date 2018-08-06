@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Chubbyphp\DoctrineDbServiceProvider\Command;
 
 use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\DBAL\Connection;
 
 /**
  * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/CreateDatabaseDoctrineCommand.php
