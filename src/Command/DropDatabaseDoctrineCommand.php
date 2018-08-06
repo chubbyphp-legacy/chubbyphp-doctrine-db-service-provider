@@ -197,8 +197,9 @@ EOT
     }
 
     /**
-     * @param array          $params
-     *@param int $shardId
+     * @param array $params
+     * @param int   $shardId
+     *
      * @return array
      */
     private function fixShardInformation(array $params, int $shardId): array

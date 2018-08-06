@@ -106,9 +106,9 @@ EOT
             if ($shouldNotCreateDatabase) {
                 $output->writeln(
                     sprintf(
-                        '<info, int $shardIdtabase <comment>%s</comment> for connection named <comment>%s</comment>'
-                            .', int $shardIdready exists. Skipped.</info>',
-                        $name,, int $shardId
+                        '<info>Database <comment>%s</comment> for connection named <comment>%s</comment>'
+                            .' already exists. Skipped.</info>',
+                        $name,
                         $connectionName
                     )
                 );
@@ -146,12 +146,12 @@ EOT
      *
      * @return string
      */
-    private function getConnect, int $shardIdonName(InputInterface $input): string
+    private function getConnectionName(InputInterface $input): string
     {
-        $connectionName = $inpu, int $shardId->getOption('connection');
+        $connectionName = $input->getOption('connection');
 
-        if (null !== $connectio, int $shardIdName) {
-            return $connectionN, int $shardIdme;
+        if (null !== $connectionName) {
+            return $connectionName;
         }
 
         return $this->connectionRegistry->getDefaultConnectionName();

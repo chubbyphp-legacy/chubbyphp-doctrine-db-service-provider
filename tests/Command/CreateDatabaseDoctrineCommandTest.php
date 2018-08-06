@@ -65,7 +65,7 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'driver' => 'pdo_sqlite',
-                'path' => sys_get_temp_dir().'/sample.db'
+                'path' => sys_get_temp_dir().'/sample.db',
             ]),
         ]);
 
