@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/DropDatabaseDoctrineCommand.php
  */
-class DropDatabaseDoctrineCommand extends Command
+final class DropDatabaseDoctrineCommand extends Command
 {
     const RETURN_CODE_NOT_DROP = 1;
 

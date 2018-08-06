@@ -15,7 +15,7 @@ use Doctrine\DBAL\Connection;
 /**
  * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/CreateDatabaseDoctrineCommand.php
  */
-class CreateDatabaseDoctrineCommand extends Command
+final class CreateDatabaseDoctrineCommand extends Command
 {
     /**
      * @var ConnectionRegistry
@@ -73,9 +73,11 @@ EOT
 
         $params = $this->getParams($connection);
 
+        $shard = $input->getOption('shard');
+
         // Cannot inject `shard` option in parent::getDoctrineConnection
         // cause it will try to connect to a non-existing database
-        $params = $this->fixShardInformation($input, $params);
+        $params = $this->fixShardInformation($params, $shard);
 
         $hasPath = isset($params['path']);
 
@@ -91,7 +93,7 @@ EOT
         unset($params['dbname'], $params['path'], $params['url']);
 
         $tmpConnection = DriverManager::getConnection($params);
-        $tmpConnection->connect($input->getOption('shard'));
+        $tmpConnection->connect($shard);
         $shouldNotCreateDatabase = $ifNotExists && in_array($name, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
@@ -171,21 +173,21 @@ EOT
     }
 
     /**
-     * @param InputInterface $input
-     * @param array          $params
+     * @param array $params
+     * @param int   $shard
      *
      * @return array
      */
-    private function fixShardInformation(InputInterface $input, array $params): array
+    private function fixShardInformation(array $params, ?int $shardId): array
     {
         if (isset($params['shards'])) {
             $shards = $params['shards'];
             // Default select global
             $params = array_merge($params, $params['global']);
             unset($params['global']['dbname']);
-            if ($input->getOption('shard')) {
+            if ($shardId) {
                 foreach ($shards as $i => $shard) {
-                    if ($shard['id'] === (int) $input->getOption('shard')) {
+                    if ($shard['id'] === $shardId) {
                         // Select sharded database
                         $params = array_merge($params, $shard);
                         unset($params['shards'][$i]['dbname'], $params['id']);

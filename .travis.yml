@@ -17,7 +17,6 @@ matrix:
 
 before_script:
   - echo 'extension=apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/apcu.ini
-  - echo 'extension=memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/memcached.ini
   - echo 'Europe/Zurich' | sudo tee /etc/timezone
   - echo 'date.timezone = "Europe/Zurich"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - composer self-update -q
@@ -26,8 +25,3 @@ before_script:
   - if [ "$dependencies" = "highest" ]; then composer update -n; fi;
 
 script: vendor/bin/phpunit --coverage-text --verbose
-
-services:
-  - memcached
-  - mongodb
-  - redis-server
