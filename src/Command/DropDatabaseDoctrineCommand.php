@@ -82,9 +82,11 @@ EOT
 
         $params = $this->getParams($connection);
 
+        $shard = (int) $input->getOption('shard');
+
         // Cannot inject `shard` option in parent::getDoctrineConnection
         // cause it will try to connect to a non-existing database
-        $params = $this->fixShardInformation($input, $params);
+        $params = $this->fixShardInformation($params, $shard);
 
         $name = isset($params['path']) ? $params['path'] : (isset($params['dbname']) ? $params['dbname'] : false);
         if (!$name) {
@@ -195,20 +197,19 @@ EOT
     }
 
     /**
-     * @param InputInterface $input
      * @param array          $params
-     *
+     *@param int $shardId
      * @return array
      */
-    private function fixShardInformation(InputInterface $input, array $params): array
+    private function fixShardInformation(array $params, int $shardId): array
     {
         if (isset($params['shards'])) {
             $shards = $params['shards'];
             // Default select global
             $params = array_merge($params, $params['global']);
-            if ($input->getOption('shard')) {
+            if ($shardId) {
                 foreach ($shards as $shard) {
-                    if ($shard['id'] === (int) $input->getOption('shard')) {
+                    if ($shard['id'] === $shardId) {
                         // Select sharded database
                         $params = $shard;
                         unset($params['id']);

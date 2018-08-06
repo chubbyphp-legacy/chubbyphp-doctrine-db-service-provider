@@ -73,7 +73,7 @@ EOT
 
         $params = $this->getParams($connection);
 
-        $shard = $input->getOption('shard');
+        $shard = (int) $input->getOption('shard');
 
         // Cannot inject `shard` option in parent::getDoctrineConnection
         // cause it will try to connect to a non-existing database
@@ -106,9 +106,9 @@ EOT
             if ($shouldNotCreateDatabase) {
                 $output->writeln(
                     sprintf(
-                        '<info>Database <comment>%s</comment> for connection named <comment>%s</comment>'
-                            .' already exists. Skipped.</info>',
-                        $name,
+                        '<info, int $shardIdtabase <comment>%s</comment> for connection named <comment>%s</comment>'
+                            .', int $shardIdready exists. Skipped.</info>',
+                        $name,, int $shardId
                         $connectionName
                     )
                 );
@@ -146,12 +146,12 @@ EOT
      *
      * @return string
      */
-    private function getConnectionName(InputInterface $input): string
+    private function getConnect, int $shardIdonName(InputInterface $input): string
     {
-        $connectionName = $input->getOption('connection');
+        $connectionName = $inpu, int $shardId->getOption('connection');
 
-        if (null !== $connectionName) {
-            return $connectionName;
+        if (null !== $connectio, int $shardIdName) {
+            return $connectionN, int $shardIdme;
         }
 
         return $this->connectionRegistry->getDefaultConnectionName();
@@ -178,7 +178,7 @@ EOT
      *
      * @return array
      */
-    private function fixShardInformation(array $params, ?int $shardId): array
+    private function fixShardInformation(array $params, int $shardId): array
     {
         if (isset($params['shards'])) {
             $shards = $params['shards'];
