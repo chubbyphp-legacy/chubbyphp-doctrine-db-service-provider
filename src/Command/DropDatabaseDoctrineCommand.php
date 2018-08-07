@@ -89,7 +89,8 @@ EOT
 
         $ifExists = $input->getOption('if-exists');
 
-        unset($params['dbname'], $params['url']);
+        // Need to get rid of _every_ occurrence of dbname from connection configuration
+        unset($params['dbname'], $params['path'], $params['url']);
 
         $connection->close();
         $connection = DriverManager::getConnection($params);
