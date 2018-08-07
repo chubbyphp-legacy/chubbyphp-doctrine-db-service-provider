@@ -46,7 +46,7 @@ class DoctrineDbalLoggerTest extends TestCase
     {
         /** @var LoggerInterface|MockObject $logger */
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMockForAbstractClass();
-        $logger->expects(self::never())->method('log');
+        $logger->expects(self::never())->method(self::anything());
 
         $dbalLogger = new DoctrineDbalLogger($logger);
         $dbalLogger->stopQuery();
