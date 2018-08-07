@@ -83,7 +83,7 @@ EOT
         $shouldNotCreateDatabase = $ifNotExists && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
-        if (!$path) {
+        if (!$isPath) {
             $dbName = $tmpConnection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
