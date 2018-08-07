@@ -5,10 +5,10 @@ build:
             version: '7.0'
             ini:
                 'date.timezone': 'Europe/Zurich'
-        memcached: true
-        mongodb: true
-        redis: true
     tests:
+        before:
+            -
+                command: echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
         override:
             -
                 command: 'vendor/bin/phpunit --coverage-clover=coverage/clover.xml'
