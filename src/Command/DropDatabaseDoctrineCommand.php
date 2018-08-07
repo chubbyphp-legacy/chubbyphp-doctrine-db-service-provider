@@ -87,6 +87,8 @@ EOT
             return self::RETURN_CODE_NO_FORCE;
         }
 
+        $isPath = isset($params['path']);
+
         $ifExists = $input->getOption('if-exists');
 
         // Need to get rid of _every_ occurrence of dbname from connection configuration
@@ -97,7 +99,7 @@ EOT
         $shouldDropDatabase = !$ifExists || in_array($dbName, $connection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
-        if (!isset($params['path'])) {
+        if (!$isPath) {
             $dbName = $connection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 

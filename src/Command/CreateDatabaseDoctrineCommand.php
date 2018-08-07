@@ -72,16 +72,18 @@ EOT
 
         $dbName = $this->getDbName($params, $connectionName);
 
-        // Need to get rid of _every_ occurrence of dbname from connection configuration
-        unset($params['dbname'], $params['path'], $params['url']);
+        $isPath = isset($params['path']);
 
         $ifNotExists = $input->getOption('if-not-exists');
+
+        // Need to get rid of _every_ occurrence of dbname from connection configuration
+        unset($params['dbname'], $params['path'], $params['url']);
 
         $tmpConnection = DriverManager::getConnection($params);
         $shouldNotCreateDatabase = $ifNotExists && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
-        if (!isset($params['path'])) {
+        if (!$path) {
             $dbName = $tmpConnection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
