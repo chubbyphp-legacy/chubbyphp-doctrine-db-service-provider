@@ -41,7 +41,6 @@ final class DropDatabaseDoctrineCommand extends Command
         $this
             ->setName('dbal:database:drop')
             ->setDescription('Drops the configured database')
-            ->addOption('shard', null, InputOption::VALUE_REQUIRED, 'The shard connection to use for this command')
             ->addOption('connection', null, InputOption::VALUE_OPTIONAL, 'The connection to use for this command')
             ->addOption(
                 'if-exists',
@@ -78,91 +77,30 @@ EOT
 
         $connection = $this->connectionRegistry->getConnection($connectionName);
 
-        $ifExists = $input->getOption('if-exists');
-
         $params = $this->getParams($connection);
 
-        $shard = (int) $input->getOption('shard');
-
-        // Cannot inject `shard` option in parent::getDoctrineConnection
-        // cause it will try to connect to a non-existing database
-        $params = $this->fixShardInformation($params, $shard);
-
-        $name = isset($params['path']) ? $params['path'] : (isset($params['dbname']) ? $params['dbname'] : false);
-        if (!$name) {
-            throw new \InvalidArgumentException(
-                'Connection does not contain a \'path\' or \'dbname\' parameter and cannot be dropped.'
-            );
-        }
-
-        unset($params['dbname'], $params['url']);
+        $dbName = $this->getDbName($params, $connectionName);
 
         if (!$input->getOption('force')) {
-            $output->writeln(
-                '<error>ATTENTION:</error> This operation should not be executed in a production environment.'
-            );
-            $output->writeln('');
-            $output->writeln(
-                sprintf(
-                    '<info>Would drop the database <comment>%s</comment> for connection'
-                        .' named <comment>%s</comment>.</info>',
-                    $name,
-                    $connectionName
-                )
-            );
-            $output->writeln('Please run the operation with --force to execute');
-            $output->writeln('<error>All data will be lost!</error>');
+            $this->writeMissingForceOutput($output, $dbName, $connectionName);
 
             return self::RETURN_CODE_NO_FORCE;
         }
 
-        // Reopen connection without database name set
-        // as some vendors do not allow dropping the database connected to.
+        $ifExists = $input->getOption('if-exists');
+
+        unset($params['dbname'], $params['url']);
+
         $connection->close();
         $connection = DriverManager::getConnection($params);
-        $shouldDropDatabase = !$ifExists || in_array($name, $connection->getSchemaManager()->listDatabases());
+        $shouldDropDatabase = !$ifExists || in_array($dbName, $connection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
         if (!isset($params['path'])) {
-            $name = $connection->getDatabasePlatform()->quoteSingleIdentifier($name);
+            $dbName = $connection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
-        try {
-            if ($shouldDropDatabase) {
-                $connection->getSchemaManager()->dropDatabase($name);
-                $output->writeln(
-                    sprintf(
-                        '<info>Dropped database <comment>%s</comment> for connection'
-                            .' named <comment>%s</comment></info>',
-                        $name,
-                        $connectionName
-                    )
-                );
-            } else {
-                $output->writeln(
-                    sprintf(
-                        '<info>Database <comment>%s</comment> for connection named <comment>%s</comment>'
-                            .' doesn\'t exist. Skipped.</info>',
-                        $name,
-                        $connectionName
-                    )
-                );
-            }
-        } catch (\Exception $e) {
-            $output->writeln(
-                sprintf(
-                    '<error>Could not drop database <comment>%s</comment> for connection'
-                        .' named <comment>%s</comment></error>',
-                    $name,
-                    $connectionName
-                )
-            );
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
-
-            return self::RETURN_CODE_NOT_DROP;
-        }
-
-        return 0;
+        return $this->dropDatabase($output, $connectionName, $tmpConnection, $dbName, $shouldDropDatabase);
     }
 
     /**
@@ -197,29 +135,98 @@ EOT
     }
 
     /**
-     * @param array $params
-     * @param int   $shardId
+     * @param array  $params
+     * @param string $connectionName
      *
-     * @return array
+     * @return string
      */
-    private function fixShardInformation(array $params, int $shardId): array
+    private function getDbName(array $params, string $connectionName): string
     {
-        if (isset($params['shards'])) {
-            $shards = $params['shards'];
-            // Default select global
-            $params = array_merge($params, $params['global']);
-            if ($shardId) {
-                foreach ($shards as $shard) {
-                    if ($shard['id'] === $shardId) {
-                        // Select sharded database
-                        $params = $shard;
-                        unset($params['id']);
-                        break;
-                    }
-                }
-            }
+        if (isset($params['path'])) {
+            return $params['path'];
         }
 
-        return $params;
+        if (isset($params['dbname'])) {
+            return $params['dbname'];
+        }
+
+        throw new \InvalidArgumentException('Connection does not contain a \'path\' or \'dbname\' parameter.');
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $dbName
+     * @param string          $connectionName
+     */
+    private function writeMissingForceOutput(OutputInterface $output, string $dbName, string $connectionName)
+    {
+        $output->writeln(
+            '<error>ATTENTION:</error> This operation should not be executed in a production environment.'
+        );
+        $output->writeln('');
+        $output->writeln(
+            sprintf(
+                '<info>Would drop the database <comment>%s</comment> for connection'
+                    .' named <comment>%s</comment>.</info>',
+                $dbName,
+                $connectionName
+            )
+        );
+        $output->writeln('Please run the operation with --force to execute');
+        $output->writeln('<error>All data will be lost!</error>');
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $connectionName
+     * @param Connection      $connection
+     * @param string          $dbName
+     * @param bool            $shouldNotCreateDatabase
+     *
+     * @return int
+     */
+    private function dropDatabase(
+        OutputInterface $output,
+        string $connectionName,
+        Connection $connection,
+        string $dbName,
+        bool $shouldDropDatabase
+    ): int {
+        try {
+            if ($shouldDropDatabase) {
+                $connection->getSchemaManager()->dropDatabase($dbName);
+                $output->writeln(
+                    sprintf(
+                        '<info>Dropped database <comment>%s</comment> for connection'
+                            .' named <comment>%s</comment></info>',
+                        $dbName,
+                        $connectionName
+                    )
+                );
+            } else {
+                $output->writeln(
+                    sprintf(
+                        '<info>Database <comment>%s</comment> for connection named <comment>%s</comment>'
+                            .' doesn\'t exist. Skipped.</info>',
+                        $dbName,
+                        $connectionName
+                    )
+                );
+            }
+        } catch (\Exception $e) {
+            $output->writeln(
+                sprintf(
+                    '<error>Could not drop database <comment>%s</comment> for connection'
+                        .' named <comment>%s</comment></error>',
+                    $dbName,
+                    $connectionName
+                )
+            );
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+
+            return self::RETURN_CODE_NOT_DROP;
+        }
+
+        return 0;
     }
 }

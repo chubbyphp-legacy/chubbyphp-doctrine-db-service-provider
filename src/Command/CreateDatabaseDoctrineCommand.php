@@ -72,8 +72,6 @@ EOT
 
         $dbName = $this->getDbName($params, $connectionName);
 
-        $isPath = isset($params['path']);
-
         // Need to get rid of _every_ occurrence of dbname from connection configuration
         unset($params['dbname'], $params['path'], $params['url']);
 
@@ -83,7 +81,7 @@ EOT
         $shouldNotCreateDatabase = $ifNotExists && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
-        if (!$isPath) {
+        if (!isset($params['path'])) {
             $dbName = $tmpConnection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
