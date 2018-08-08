@@ -103,7 +103,7 @@ EOT
             $dbName = $connection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
-        return $this->dropDatabase($output, $connectionName, $tmpConnection, $dbName, $shouldDropDatabase);
+        return $this->dropDatabase($output, $connectionName, $connection, $dbName, $shouldDropDatabase);
     }
 
     /**
@@ -201,7 +201,7 @@ EOT
                 $output->writeln(
                     sprintf(
                         '<info>Dropped database <comment>%s</comment> for connection'
-                            .' named <comment>%s</comment></info>',
+                            .' named <comment>%s</comment>.</info>',
                         $dbName,
                         $connectionName
                     )
@@ -220,7 +220,7 @@ EOT
             $output->writeln(
                 sprintf(
                     '<error>Could not drop database <comment>%s</comment> for connection'
-                        .' named <comment>%s</comment></error>',
+                        .' named <comment>%s</comment>.</error>',
                     $dbName,
                     $connectionName
                 )

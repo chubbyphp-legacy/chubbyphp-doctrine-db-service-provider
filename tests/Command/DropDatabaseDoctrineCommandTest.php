@@ -2,7 +2,7 @@
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider;
 
-use Chubbyphp\DoctrineDbServiceProvider\Command\CreateDatabaseDoctrineCommand;
+use Chubbyphp\DoctrineDbServiceProvider\Command\DropDatabaseDoctrineCommand;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Persistence\ConnectionRegistry;
@@ -11,15 +11,60 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Doctrine\DBAL\DriverManager;
 
 /**
- * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\CreateDatabaseDoctrineCommand
+ * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\DropDatabaseDoctrineCommand
  */
-class CreateDatabaseDoctrineCommandTest extends TestCase
+class DropDatabaseDoctrineCommandTest extends TestCase
 {
     use MockByCallsTrait;
 
     public function testExecuteSqliteWithoutName()
+    {
+        $dbName = sprintf('sample-%s', uniqid());
+
+        $path = sys_get_temp_dir().'/'.$dbName.'.db';
+
+        $setupConnection = DriverManager::getConnection([
+            'driver' => 'pdo_sqlite',
+            'path' => $path,
+        ]);
+
+        $setupConnection->getSchemaManager()->createDatabase($path);
+
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_sqlite',
+                'path' => $path,
+            ]),
+            Call::create('close'),
+        ]);
+
+        /** @var ConnectionRegistry|MockObject $connectionRegistry */
+        $connectionRegistry = $this->getMockByCalls(ConnectionRegistry::class, [
+            Call::create('getDefaultConnectionName')->with()->willReturn('default'),
+            Call::create('getConnection')->with('default')->willReturn($connection),
+        ]);
+
+        $input = new ArrayInput([
+            '--force' => true,
+        ]);
+
+        $output = new BufferedOutput();
+
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
+
+        self::assertSame(0, $command->run($input, $output));
+
+        self::assertSame(
+            str_replace('dbname', $path, 'Dropped database dbname for connection named default.'.PHP_EOL),
+            $output->fetch()
+        );
+    }
+
+    public function testExecuteSqliteWithoutNameAndMissingForce()
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -43,14 +88,20 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new CreateDatabaseDoctrineCommand($connectionRegistry);
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
 
-        self::assertSame(0, $command->run($input, $output));
+        self::assertSame(2, $command->run($input, $output));
 
-        self::assertSame(
-            str_replace('dbname', $path, 'Created database dbname for connection named default.'.PHP_EOL),
-            $output->fetch()
-        );
+        $message = <<<'EOT'
+ATTENTION: This operation should not be executed in a production environment.
+
+Would drop the database /tmp/sample.db for connection named default.
+Please run the operation with --force to execute
+All data will be lost!
+
+EOT;
+
+        self::assertSame(str_replace('sample', $dbName, $message), $output->fetch());
     }
 
     public function testExecuteSqliteWithMissingPath()
@@ -77,7 +128,7 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new CreateDatabaseDoctrineCommand($connectionRegistry);
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
         $command->run($input, $output);
     }
 
@@ -85,6 +136,16 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
     {
         $dbName = sprintf('sample-%s', uniqid());
 
+        $setupConnection = DriverManager::getConnection([
+            'driver' => 'pdo_mysql',
+            'host' => 'localhost',
+            'password' => 'root',
+            'port' => 3306,
+            'user' => 'root',
+        ]);
+
+        $setupConnection->getSchemaManager()->createDatabase('`'.$dbName.'`');
+
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
@@ -97,6 +158,7 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
                     'user' => 'root',
                 ],
             ]),
+            Call::create('close'),
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -106,21 +168,22 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
 
         $input = new ArrayInput([
             '--connection' => 'sample',
+            '--force' => true,
         ]);
 
         $output = new BufferedOutput();
 
-        $command = new CreateDatabaseDoctrineCommand($connectionRegistry);
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
 
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
-            str_replace('dbname', $dbName, 'Created database `dbname` for connection named sample.'.PHP_EOL),
+            str_replace('dbname', $dbName, 'Dropped database `dbname` for connection named sample.'.PHP_EOL),
             $output->fetch()
         );
     }
 
-    public function testExecuteMysqlWithNameDbExists()
+    public function testExecuteMysqlWithNameAndMissingDatabaseIfExists()
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -136,99 +199,79 @@ class CreateDatabaseDoctrineCommandTest extends TestCase
                     'user' => 'root',
                 ],
             ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
+            Call::create('close'),
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
         $connectionRegistry = $this->getMockByCalls(ConnectionRegistry::class, [
             Call::create('getConnection')->with('sample')->willReturn($connection),
-            Call::create('getConnection')->with('sample')->willReturn($connection),
         ]);
 
         $input = new ArrayInput([
             '--connection' => 'sample',
+            '--if-exists' => true,
+            '--force' => true,
         ]);
 
         $output = new BufferedOutput();
 
-        $command = new CreateDatabaseDoctrineCommand($connectionRegistry);
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
 
-        self::assertSame(0, $command->run($input, new BufferedOutput()));
-        self::assertSame(1, $command->run($input, $output));
-
-        $message = <<<'EOT'
-Could not create database `dbname`.
-An exception occurred while executing 'CREATE DATABASE `dbname`':
-
-SQLSTATE[HY000]: General error: 1007 Can't create database 'dbname'; database exists
-
-EOT;
-
-        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
-    }
-
-    public function testExecuteMysqlWithNameDbExistsAndIfNotExistsTrue()
-    {
-        $dbName = sprintf('sample-%s', uniqid());
-
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-        ]);
-
-        /** @var ConnectionRegistry|MockObject $connectionRegistry */
-        $connectionRegistry = $this->getMockByCalls(ConnectionRegistry::class, [
-            Call::create('getConnection')->with('sample')->willReturn($connection),
-            Call::create('getConnection')->with('sample')->willReturn($connection),
-        ]);
-
-        $input = new ArrayInput([
-            '--connection' => 'sample',
-            '--if-not-exists' => true,
-        ]);
-
-        $output = new BufferedOutput();
-
-        $command = new CreateDatabaseDoctrineCommand($connectionRegistry);
-
-        self::assertSame(0, $command->run($input, new BufferedOutput()));
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
             str_replace(
                 'dbname',
                 $dbName,
-                'Database `dbname` for connection named sample already exists. Skipped.'.PHP_EOL
+                'Database `dbname` for connection named sample doesn\'t exist. Skipped.'.PHP_EOL
             ),
             $output->fetch()
         );
+    }
+
+    public function testExecuteMysqlWithNameAndMissingDatabase()
+    {
+        $dbName = sprintf('sample-%s', uniqid());
+
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'master' => [
+                    'dbname' => $dbName,
+                    'driver' => 'pdo_mysql',
+                    'host' => 'localhost',
+                    'password' => 'root',
+                    'port' => 3306,
+                    'user' => 'root',
+                ],
+            ]),
+            Call::create('close'),
+        ]);
+
+        /** @var ConnectionRegistry|MockObject $connectionRegistry */
+        $connectionRegistry = $this->getMockByCalls(ConnectionRegistry::class, [
+            Call::create('getConnection')->with('sample')->willReturn($connection),
+        ]);
+
+        $input = new ArrayInput([
+            '--connection' => 'sample',
+            '--force' => true,
+        ]);
+
+        $output = new BufferedOutput();
+
+        $command = new DropDatabaseDoctrineCommand($connectionRegistry);
+
+        self::assertSame(1, $command->run($input, $output));
+
+        $message = <<<'EOT'
+Could not drop database `dbname` for connection named sample.
+An exception occurred while executing 'DROP DATABASE `dbname`':
+
+SQLSTATE[HY000]: General error: 1008 Can't drop database 'dbname'; database doesn't exist
+
+EOT;
+
+        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 }
