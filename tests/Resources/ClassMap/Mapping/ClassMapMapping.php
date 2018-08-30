@@ -16,7 +16,7 @@ class ClassMapMapping implements ClassMapMappingInterface
      */
     public function configureMapping(ClassMetadata $metadata)
     {
-        $metadata->setPrimaryTable(['name' => 'php']);
+        $metadata->setPrimaryTable(['name' => 'class_map']);
 
         $metadata->mapField([
             'id' => true,

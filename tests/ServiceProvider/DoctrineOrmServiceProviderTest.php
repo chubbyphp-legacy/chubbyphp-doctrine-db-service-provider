@@ -10,6 +10,7 @@ use Chubbyphp\Mock\MockByCallsTrait;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Annotation\Entity\Annotation;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Entity\ClassMap;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Mapping\ClassMapMapping;
+use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Php\Entity\Php;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\SimpleXml\Entity\SimpleXml;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\SimpleYaml\Entity\SimpleYaml;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity\StaticPhp;
@@ -64,6 +65,7 @@ class DoctrineOrmServiceProviderTest extends TestCase
         self::assertArrayHasKey('doctrine.orm.manager_registry', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.annotation', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.class_map', $container);
+        self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.php', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.simple_xml', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.simple_yaml', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.static_php', $container);
@@ -201,6 +203,7 @@ class DoctrineOrmServiceProviderTest extends TestCase
 
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.annotation']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.class_map']);
+        self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.php']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.simple_xml']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.simple_yaml']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.static_php']);
@@ -383,10 +386,21 @@ class DoctrineOrmServiceProviderTest extends TestCase
                     [
                         'type' => 'class_map',
                         'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Entity',
-                        'alias' => 'Entity\StaticPhp',
+                        'alias' => 'Entity\ClassMap',
                         'map' => [
                             ClassMap::class => ClassMapMapping::class,
                         ],
+                    ],
+                ],
+            ],
+            'php' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'php',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Php\Entity',
+                        'alias' => 'Entity\Php',
+                        'path' => __DIR__.'/../Resources/Php/config',
                     ],
                 ],
             ],
@@ -455,6 +469,26 @@ class DoctrineOrmServiceProviderTest extends TestCase
         self::assertSame(
             'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Annotation\Entity',
             $annotationEm->getConfiguration()->getEntityNamespace('Entity\Annotation')
+        );
+
+        /** @var EntityManager $classMapEm */
+        $classMapEm = $container['doctrine.orm.ems']['classMap'];
+
+        self::assertSame($container['doctrine.dbal.dbs']['one'], $classMapEm->getConnection());
+        self::assertInstanceOf(EntityRepository::class, $classMapEm->getRepository(ClassMap::class));
+        self::assertSame(
+            'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Entity',
+            $classMapEm->getConfiguration()->getEntityNamespace('Entity\ClassMap')
+        );
+
+        /** @var EntityManager $php */
+        $php = $container['doctrine.orm.ems']['php'];
+
+        self::assertSame($container['doctrine.dbal.dbs']['one'], $php->getConnection());
+        self::assertInstanceOf(EntityRepository::class, $php->getRepository(Php::class));
+        self::assertSame(
+            'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Php\Entity',
+            $php->getConfiguration()->getEntityNamespace('Entity\Php')
         );
 
         /** @var EntityManager $simpleYamlEm */

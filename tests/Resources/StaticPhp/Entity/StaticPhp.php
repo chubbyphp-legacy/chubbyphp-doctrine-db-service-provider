@@ -25,7 +25,7 @@ class StaticPhp
      */
     public static function loadMetadata(ClassMetadata $metadata)
     {
-        $metadata->setPrimaryTable(['name' => 'php']);
+        $metadata->setPrimaryTable(['name' => 'static_php']);
 
         $metadata->mapField([
             'id' => true,

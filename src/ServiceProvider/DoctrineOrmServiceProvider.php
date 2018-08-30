@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\ServiceProvider;
 
+use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver;
 use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver;
 use Doctrine\ORM\Cache\CacheConfiguration;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
@@ -25,7 +27,6 @@ use Doctrine\ORM\Mapping\Driver\YamlDriver;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver;
 
 /**
  * This provider is heavily inspired by
@@ -50,6 +51,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $container['doctrine.orm.manager_registry'] = $this->getOrmManagerRegistryDefintion($container);
         $container['doctrine.orm.mapping_driver.factory.annotation'] = $this->getOrmMappingDriverFactoryAnnotation($container);
         $container['doctrine.orm.mapping_driver.factory.class_map'] = $this->getOrmMappingDriverFactoryClassMap($container);
+        $container['doctrine.orm.mapping_driver.factory.php'] = $this->getOrmMappingDriverFactoryPhp($container);
         $container['doctrine.orm.mapping_driver.factory.simple_xml'] = $this->getOrmMappingDriverFactorySimpleXml($container);
         $container['doctrine.orm.mapping_driver.factory.simple_yaml'] = $this->getOrmMappingDriverFactorySimpleYaml($container);
         $container['doctrine.orm.mapping_driver.factory.static_php'] = $this->getOrmMappingDriverFactoryStaticPhp($container);
@@ -352,10 +354,10 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
      *
      * @return callable
      */
-    private function getOrmMappingDriverFactoryStaticPhp(Container $container): callable
+    private function getOrmMappingDriverFactoryPhp(Container $container): callable
     {
         return $container->protect(function (array $mapping, Configuration $config) {
-            return new StaticPHPDriver($mapping['path']);
+            return new PHPDriver($mapping['path']);
         });
     }
 
@@ -386,6 +388,18 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
                 [$mapping['path'] => $mapping['namespace']],
                 $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
             );
+        });
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return callable
+     */
+    private function getOrmMappingDriverFactoryStaticPhp(Container $container): callable
+    {
+        return $container->protect(function (array $mapping, Configuration $config) {
+            return new StaticPHPDriver($mapping['path']);
         });
     }
 
