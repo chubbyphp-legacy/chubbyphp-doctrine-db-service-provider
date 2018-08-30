@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Chubbyphp\Tests\DoctrineDbServiceProvider;
+namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Command;
 
 use Chubbyphp\DoctrineDbServiceProvider\Command\DropDatabaseDoctrineCommand;
 use Chubbyphp\Mock\Call;

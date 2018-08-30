@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Chubbyphp\Tests\DoctrineDbServiceProvider;
+namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Registry;
 
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
