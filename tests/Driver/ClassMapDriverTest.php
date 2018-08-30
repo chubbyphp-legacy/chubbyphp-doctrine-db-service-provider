@@ -120,9 +120,9 @@ class ClassMapDriverTest extends TestCase
     }
 
     /**
-     * @return \object
+     * @return object
      */
-    private function getMappingObject(): object
+    private function getMappingObject()
     {
         return new class() implements ClassMapMappingInterface {
             /**
