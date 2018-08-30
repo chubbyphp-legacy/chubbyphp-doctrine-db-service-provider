@@ -27,7 +27,7 @@ Doctrine database service providers for doctrine dbal and orm.
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-doctrine-db-service-provider][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-doctrine-db-service-provider "~1.0"
+composer require chubbyphp/chubbyphp-doctrine-db-service-provider "~1.1"
 ```
 
 ## Providers

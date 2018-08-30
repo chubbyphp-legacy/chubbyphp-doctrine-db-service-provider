@@ -25,6 +25,7 @@ use Doctrine\ORM\Mapping\Driver\YamlDriver;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver;
 
 /**
  * This provider is heavily inspired by
@@ -48,9 +49,10 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $container['doctrine.orm.entity.listener_resolver.default'] = $this->getOrmEntityListenerResolverDefinition($container);
         $container['doctrine.orm.manager_registry'] = $this->getOrmManagerRegistryDefintion($container);
         $container['doctrine.orm.mapping_driver.factory.annotation'] = $this->getOrmMappingDriverFactoryAnnotation($container);
-        $container['doctrine.orm.mapping_driver.factory.static_php'] = $this->getOrmMappingDriverFactoryStaticPhp($container);
+        $container['doctrine.orm.mapping_driver.factory.class_map'] = $this->getOrmMappingDriverFactoryClassMap($container);
         $container['doctrine.orm.mapping_driver.factory.simple_xml'] = $this->getOrmMappingDriverFactorySimpleXml($container);
         $container['doctrine.orm.mapping_driver.factory.simple_yaml'] = $this->getOrmMappingDriverFactorySimpleYaml($container);
+        $container['doctrine.orm.mapping_driver.factory.static_php'] = $this->getOrmMappingDriverFactoryStaticPhp($container);
         $container['doctrine.orm.mapping_driver.factory.xml'] = $this->getOrmMappingDriverFactoryXml($container);
         $container['doctrine.orm.mapping_driver.factory.yaml'] = $this->getOrmMappingDriverFactoryYaml($container);
         $container['doctrine.orm.mapping_driver_chain'] = $this->getOrmMappingDriverChainDefinition($container);
@@ -330,6 +332,18 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
     {
         return $container->protect(function (array $mapping, Configuration $config) {
             return $config->newDefaultAnnotationDriver((array) $mapping['path'], false);
+        });
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return callable
+     */
+    private function getOrmMappingDriverFactoryClassMap(Container $container): callable
+    {
+        return $container->protect(function (array $mapping, Configuration $config) {
+            return new ClassMapDriver($mapping['map']);
         });
     }
 

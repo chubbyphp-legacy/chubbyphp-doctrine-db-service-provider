@@ -33,7 +33,7 @@ composer require doctrine/orm "^2.5"
         Add additional resolvers by adding new service:
         `$container['doctrine.orm.entity.listener_resolver.<type>']`.
     * **mappings**: Array of Mappings.
-        * **type**: The mapping driver to use. Can be any of: `annotation`, `yaml`, `simple_yaml`, `xml`, `simple_xml`,  or `static_php`.
+        * **type**: The mapping driver to use. Can be any of: `annotation`, `class_map`, `yaml`, `simple_yaml`, `xml`, `simple_xml`,  or `static_php`.
             Add additional mapping driver factories by adding new service:
             `$container['doctrine.orm.mapping_driver.factory.<type>']`
         * **namespace**: The entity namespace. Example: `One\Entity`

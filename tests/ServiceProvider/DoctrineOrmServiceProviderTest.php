@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider\ServiceProvider;
 
-use Chubbyphp\Mock\MockByCallsTrait;
 use Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider;
 use Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineOrmServiceProvider;
+use Chubbyphp\Mock\MockByCallsTrait;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Annotation\Entity\Annotation;
+use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Entity\ClassMap;
+use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Mapping\ClassMapMapping;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\SimpleXml\Entity\SimpleXml;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\SimpleYaml\Entity\SimpleYaml;
 use Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity\StaticPhp;
@@ -61,9 +63,10 @@ class DoctrineOrmServiceProviderTest extends TestCase
         self::assertArrayHasKey('doctrine.orm.entity.listener_resolver.default', $container);
         self::assertArrayHasKey('doctrine.orm.manager_registry', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.annotation', $container);
-        self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.static_php', $container);
+        self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.class_map', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.simple_xml', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.simple_yaml', $container);
+        self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.static_php', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.xml', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver.factory.yaml', $container);
         self::assertArrayHasKey('doctrine.orm.mapping_driver_chain', $container);
@@ -197,9 +200,10 @@ class DoctrineOrmServiceProviderTest extends TestCase
         // end: doctrine.orm.manager_registry
 
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.annotation']);
-        self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.static_php']);
+        self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.class_map']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.simple_xml']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.simple_yaml']);
+        self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.static_php']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.xml']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver.factory.yaml']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.orm.mapping_driver_chain']);
@@ -370,6 +374,19 @@ class DoctrineOrmServiceProviderTest extends TestCase
                         'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Annotation\Entity',
                         'alias' => 'Entity\Annotation',
                         'path' => __DIR__.'/../Resources/Annotation/Entity',
+                    ],
+                ],
+            ],
+            'classMap' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'class_map',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Entity',
+                        'alias' => 'Entity\StaticPhp',
+                        'map' => [
+                            ClassMap::class => ClassMapMapping::class,
+                        ],
                     ],
                 ],
             ],
