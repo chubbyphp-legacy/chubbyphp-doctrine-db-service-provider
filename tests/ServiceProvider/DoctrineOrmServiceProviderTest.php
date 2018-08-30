@@ -426,6 +426,17 @@ class DoctrineOrmServiceProviderTest extends TestCase
                     ],
                 ],
             ],
+            'staticPhp' => [
+                'connection' => 'two',
+                'mappings' => [
+                    [
+                        'type' => 'static_php',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity',
+                        'alias' => 'Entity\StaticPhp',
+                        'path' => __DIR__.'/../Resources/StaticPhp/Entity',
+                    ],
+                ],
+            ],
             'yaml' => [
                 'connection' => 'two',
                 'mappings' => [
@@ -448,19 +459,9 @@ class DoctrineOrmServiceProviderTest extends TestCase
                     ],
                 ],
             ],
-            'staticPhp' => [
-                'connection' => 'two',
-                'mappings' => [
-                    [
-                        'type' => 'static_php',
-                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity',
-                        'alias' => 'Entity\StaticPhp',
-                        'path' => __DIR__.'/../Resources/StaticPhp/Entity',
-                    ],
-                ],
-            ],
         ];
 
+        // start: annotation
         /** @var EntityManager $annotationEm */
         $annotationEm = $container['doctrine.orm.ems']['annotation'];
 
@@ -471,6 +472,14 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $annotationEm->getConfiguration()->getEntityNamespace('Entity\Annotation')
         );
 
+        $annotationClassMetadata = $annotationEm->getClassMetadata(Annotation::class);
+
+        self::assertSame(['name' => 'annotation'], $annotationClassMetadata->table);
+        self::assertArrayHasKey('id', $annotationClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $annotationClassMetadata->fieldMappings);
+        // end: annotation
+
+        // start: class_map
         /** @var EntityManager $classMapEm */
         $classMapEm = $container['doctrine.orm.ems']['classMap'];
 
@@ -481,16 +490,32 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $classMapEm->getConfiguration()->getEntityNamespace('Entity\ClassMap')
         );
 
-        /** @var EntityManager $php */
-        $php = $container['doctrine.orm.ems']['php'];
+        $classMapClassMetadata = $classMapEm->getClassMetadata(ClassMap::class);
 
-        self::assertSame($container['doctrine.dbal.dbs']['one'], $php->getConnection());
-        self::assertInstanceOf(EntityRepository::class, $php->getRepository(Php::class));
+        self::assertSame(['name' => 'class_map'], $classMapClassMetadata->table);
+        self::assertArrayHasKey('id', $classMapClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $classMapClassMetadata->fieldMappings);
+        // end: class_map
+
+        // start: php
+        /** @var EntityManager $phpEm */
+        $phpEm = $container['doctrine.orm.ems']['php'];
+
+        self::assertSame($container['doctrine.dbal.dbs']['one'], $phpEm->getConnection());
+        self::assertInstanceOf(EntityRepository::class, $phpEm->getRepository(Php::class));
         self::assertSame(
             'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Php\Entity',
-            $php->getConfiguration()->getEntityNamespace('Entity\Php')
+            $phpEm->getConfiguration()->getEntityNamespace('Entity\Php')
         );
 
+        $phpClassMetadata = $phpEm->getClassMetadata(Php::class);
+
+        self::assertSame(['name' => 'php'], $phpClassMetadata->table);
+        self::assertArrayHasKey('id', $phpClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $phpClassMetadata->fieldMappings);
+        // end: php
+
+        // start: simple_yaml
         /** @var EntityManager $simpleYamlEm */
         $simpleYamlEm = $container['doctrine.orm.ems']['simpleYaml'];
 
@@ -501,6 +526,14 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $simpleYamlEm->getConfiguration()->getEntityNamespace('Entity\SimpleYaml')
         );
 
+        $simpleYamlClassMetadata = $simpleYamlEm->getClassMetadata(SimpleYaml::class);
+
+        self::assertSame(['name' => 'simple_yaml'], $simpleYamlClassMetadata->table);
+        self::assertArrayHasKey('id', $simpleYamlClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $simpleYamlClassMetadata->fieldMappings);
+        // end: simple_yaml
+
+        // start: simple_xml
         /** @var EntityManager $simpleXmlEm */
         $simpleXmlEm = $container['doctrine.orm.ems']['simpleXml'];
 
@@ -511,6 +544,32 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $simpleXmlEm->getConfiguration()->getEntityNamespace('Entity\SimpleXml')
         );
 
+        $simpleXmlClassMetadata = $simpleXmlEm->getClassMetadata(SimpleXml::class);
+
+        self::assertSame(['name' => 'simple_xml'], $simpleXmlClassMetadata->table);
+        self::assertArrayHasKey('id', $simpleXmlClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $simpleXmlClassMetadata->fieldMappings);
+        // end: simple_xml
+
+        // start: static_php
+        /** @var EntityManager $staticPhp */
+        $staticPhp = $container['doctrine.orm.ems']['staticPhp'];
+
+        self::assertSame($container['doctrine.dbal.dbs']['two'], $staticPhp->getConnection());
+        self::assertInstanceOf(EntityRepository::class, $staticPhp->getRepository(StaticPhp::class));
+        self::assertSame(
+            'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity',
+            $staticPhp->getConfiguration()->getEntityNamespace('Entity\StaticPhp')
+        );
+
+        $staticPhpClassMetadata = $staticPhp->getClassMetadata(StaticPhp::class);
+
+        self::assertSame(['name' => 'static_php'], $staticPhpClassMetadata->table);
+        self::assertArrayHasKey('id', $staticPhpClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $staticPhpClassMetadata->fieldMappings);
+        // end: static_php
+
+        // start: yaml
         /** @var EntityManager $yamlEm */
         $yamlEm = $container['doctrine.orm.ems']['yaml'];
 
@@ -521,6 +580,14 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $yamlEm->getConfiguration()->getEntityNamespace('Entity\Yaml')
         );
 
+        $yamlClassMetadata = $yamlEm->getClassMetadata(Yaml::class);
+
+        self::assertSame(['name' => 'yaml'], $yamlClassMetadata->table);
+        self::assertArrayHasKey('id', $yamlClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $yamlClassMetadata->fieldMappings);
+        // end: yaml
+
+        // start: xml
         /** @var EntityManager $xmlEm */
         $xmlEm = $container['doctrine.orm.ems']['xml'];
 
@@ -531,14 +598,11 @@ class DoctrineOrmServiceProviderTest extends TestCase
             $xmlEm->getConfiguration()->getEntityNamespace('Entity\Xml')
         );
 
-        /** @var EntityManager $staticPhp */
-        $staticPhp = $container['doctrine.orm.ems']['staticPhp'];
+        $xmlClassMetadata = $xmlEm->getClassMetadata(Xml::class);
 
-        self::assertSame($container['doctrine.dbal.dbs']['two'], $staticPhp->getConnection());
-        self::assertInstanceOf(EntityRepository::class, $staticPhp->getRepository(StaticPhp::class));
-        self::assertSame(
-            'Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity',
-            $staticPhp->getConfiguration()->getEntityNamespace('Entity\StaticPhp')
-        );
+        self::assertSame(['name' => 'xml'], $xmlClassMetadata->table);
+        self::assertArrayHasKey('id', $xmlClassMetadata->fieldMappings);
+        self::assertArrayHasKey('name', $xmlClassMetadata->fieldMappings);
+        // end: xml
     }
 }
