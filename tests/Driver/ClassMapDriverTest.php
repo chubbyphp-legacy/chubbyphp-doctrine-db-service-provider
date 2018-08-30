@@ -111,9 +111,9 @@ class ClassMapDriverTest extends TestCase
     }
 
     /**
-     * @return \object
+     * @return object
      */
-    private function getObject(): object
+    private function getObject()
     {
         return new class() {
         };
