@@ -20,7 +20,7 @@ class ClassMapDriverTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testLoadMetadataForClass(): void
+    public function testLoadMetadataForClass()
     {
         $object = $this->getObject();
         $class = get_class($object);
@@ -37,7 +37,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithInvalidClassMetadata(): void
+    public function testLoadMetadataForClassWithInvalidClassMetadata()
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessageRegExp(
@@ -54,7 +54,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithMissingMapping(): void
+    public function testLoadMetadataForClassWithMissingMapping()
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessage('No configured mapping for document "stdClass"');
@@ -67,7 +67,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass(\stdClass::class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithInvalidMapping(): void
+    public function testLoadMetadataForClassWithInvalidMapping()
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessageRegExp(
@@ -85,7 +85,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testGetAllClassNames(): void
+    public function testGetAllClassNames()
     {
         $object = $this->getObject();
         $class = get_class($object);
@@ -97,7 +97,7 @@ class ClassMapDriverTest extends TestCase
         self::assertEquals([$class], $classMapDriver->getAllClassNames());
     }
 
-    public function testIsTransient(): void
+    public function testIsTransient()
     {
         $object = $this->getObject();
         $class = get_class($object);
