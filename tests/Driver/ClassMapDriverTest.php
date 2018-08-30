@@ -130,7 +130,7 @@ class ClassMapDriverTest extends TestCase
              *
              * @throws MappingException
              */
-            public function configureMapping(ClassMetadata $metadata): void
+            public function configureMapping(ClassMetadata $metadata)
             {
                 $metadata->mapField(['fieldName' => 'key', 'type' => 'string']);
             }
