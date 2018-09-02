@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool;
 
+use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\DoctrineOrmCommandTrait;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand as BaseCreateCommand;
 
 /**
@@ -11,5 +12,5 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand as BaseCreateCom
  */
 final class CreateCommand extends BaseCreateCommand
 {
-    use CommandTrait;
+    use DoctrineOrmCommandTrait;
 }

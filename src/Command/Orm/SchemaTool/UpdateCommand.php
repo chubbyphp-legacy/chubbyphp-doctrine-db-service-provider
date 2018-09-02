@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool;
 
+use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\DoctrineOrmCommandTrait;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as BaseUpdateCommand;
 
 /**
@@ -11,5 +12,5 @@ use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as BaseUpdateCom
  */
 final class UpdateCommand extends BaseUpdateCommand
 {
-    use CommandTrait;
+    use DoctrineOrmCommandTrait;
 }

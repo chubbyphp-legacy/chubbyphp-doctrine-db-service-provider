@@ -11,5 +11,5 @@ use Doctrine\ORM\Tools\Console\Command\InfoCommand as BaseInfoCommand;
  */
 final class InfoCommand extends BaseInfoCommand
 {
-    use CommandTrait;
+    use DoctrineOrmCommandTrait;
 }
