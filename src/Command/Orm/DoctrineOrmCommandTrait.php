@@ -28,9 +28,6 @@ trait DoctrineOrmCommandTrait
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         parent::configure();

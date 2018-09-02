@@ -51,6 +51,11 @@ class DoctrineOrmCommandTraitTest extends TestCase
 
 abstract class BaseCommand extends Command
 {
+    protected function configure()
+    {
+        $this->setName('test');
+    }
+
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
