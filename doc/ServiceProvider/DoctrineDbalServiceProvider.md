@@ -2,12 +2,6 @@
 
 The *DoctrineDbalServiceProvider* provides integration with the [Doctrine Dbal][1].
 
-## Install
-
-```sh
-composer require doctrine/dbal "^2.5"
-```
-
 ## Parameters
 
 * **doctrine.dbal.db.options**: Array of Doctrine DBAL options.
