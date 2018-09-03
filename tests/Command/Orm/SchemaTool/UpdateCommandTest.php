@@ -7,7 +7,6 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Command\Orm\SchemaTool;
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool\UpdateCommand;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as BaseUpdateCommand;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +19,7 @@ class UpdateCommandTest extends TestCase
 
     public function testInstanceOf()
     {
-        /** @var ManagerRegistry $entityManager */
+        /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockByCalls(ManagerRegistry::class);
 
         self::assertInstanceOf(BaseUpdateCommand::class, new UpdateCommand($managerRegistry));

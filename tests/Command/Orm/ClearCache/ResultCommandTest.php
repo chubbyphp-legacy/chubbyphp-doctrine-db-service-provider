@@ -7,7 +7,6 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Command\Orm\ClearCache;
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\ClearCache\ResultCommand;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand as BaseResultCommand;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +19,7 @@ class ResultCommandTest extends TestCase
 
     public function testInstanceOf()
     {
-        /** @var ManagerRegistry $entityManager */
+        /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockByCalls(ManagerRegistry::class);
 
         self::assertInstanceOf(BaseResultCommand::class, new ResultCommand($managerRegistry));
