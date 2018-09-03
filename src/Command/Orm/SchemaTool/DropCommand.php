@@ -7,9 +7,6 @@ namespace Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool;
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\DoctrineOrmCommandTrait;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand as BaseDropCommand;
 
-/**
- * @codeCoverageIgnore
- */
 final class DropCommand extends BaseDropCommand
 {
     use DoctrineOrmCommandTrait;
