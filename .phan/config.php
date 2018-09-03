@@ -5,9 +5,9 @@ return [
     'directory_list' => [
         'src',
         'vendor/doctrine',
-        'vendor/monolog/monolog',
         'vendor/pimple/pimple',
-        'vendor/psr/log',
+        'vendor/psr',
+        'vendor/symfony',
     ],
     "exclude_analysis_directory_list" => [
         'vendor/'
