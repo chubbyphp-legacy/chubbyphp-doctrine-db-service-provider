@@ -12,6 +12,7 @@
     "require": {
         "php": "~7.0",
         "doctrine/cache": "^1.6",
+        "doctrine/common": "^2.5",
         "doctrine/dbal": "^2.5"
     },
     "conflict": {
