@@ -283,8 +283,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 
             if (!isset($container['doctrine.orm.ems.options'])) {
                 $container['doctrine.orm.ems.options'] = [
-                    'default' => isset($container['doctrine.orm.em.options']) ?
-                        $container['doctrine.orm.em.options'] : [],
+                    'default' => $container['doctrine.orm.em.options'] ?? [],
                 ];
             }
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Logger;
 
-use Psr\Log\LoggerInterface;
 use Doctrine\DBAL\Logging\SQLLogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * @see https://github.com/symfony/doctrine-bridge/blob/master/Logger/DbalLogger.php
@@ -53,7 +53,7 @@ final class DoctrineDbalLogger implements SQLLogger
         }
 
         if (null !== $this->logger) {
-            $this->log($sql, null === $params ? array() : $params);
+            $this->log($sql, null === $params ? [] : $params);
         }
     }
 

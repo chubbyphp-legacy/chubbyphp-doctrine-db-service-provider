@@ -9,14 +9,16 @@ use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Doctrine\DBAL\DriverManager;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\DropDatabaseDoctrineCommand
+ *
+ * @internal
  */
 class DropDatabaseDoctrineCommandTest extends TestCase
 {

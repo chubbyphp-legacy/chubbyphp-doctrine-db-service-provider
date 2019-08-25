@@ -15,6 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver
+ *
+ * @internal
  */
 class ClassMapDriverTest extends TestCase
 {

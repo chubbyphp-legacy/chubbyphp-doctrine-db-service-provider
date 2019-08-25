@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\InfoCommand
+ *
+ * @internal
  */
 class InfoCommandTest extends TestCase
 {

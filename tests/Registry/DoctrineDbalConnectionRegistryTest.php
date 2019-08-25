@@ -14,6 +14,8 @@ use Pimple\Container;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineDbalConnectionRegistry
+ *
+ * @internal
  */
 class DoctrineDbalConnectionRegistryTest extends TestCase
 {

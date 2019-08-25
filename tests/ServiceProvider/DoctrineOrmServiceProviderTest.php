@@ -40,6 +40,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineOrmServiceProvider
+ *
+ * @internal
  */
 class DoctrineOrmServiceProviderTest extends TestCase
 {

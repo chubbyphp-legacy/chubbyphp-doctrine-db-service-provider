@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool\CreateCommand
+ *
+ * @internal
  */
 class CreateCommandTest extends TestCase
 {

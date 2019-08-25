@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Registry;
 
+use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Proxy;
@@ -22,6 +22,8 @@ use Pimple\Container;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry
+ *
+ * @internal
  */
 class DoctrineOrmManagerRegistryTest extends TestCase
 {

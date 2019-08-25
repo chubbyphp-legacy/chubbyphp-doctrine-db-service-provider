@@ -16,6 +16,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\CreateDatabaseDoctrineCommand
+ *
+ * @internal
  */
 class CreateDatabaseDoctrineCommandTest extends TestCase
 {

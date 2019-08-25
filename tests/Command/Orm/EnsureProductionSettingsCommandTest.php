@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\EnsureProductionSettingsCommand
+ *
+ * @internal
  */
 class EnsureProductionSettingsCommandTest extends TestCase
 {

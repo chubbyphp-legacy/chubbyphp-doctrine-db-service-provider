@@ -9,8 +9,8 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @see https://github.com/doctrine/DoctrineBundle/blob/master/Command/CreateDatabaseDoctrineCommand.php
@@ -44,7 +44,7 @@ final class CreateDatabaseDoctrineCommand extends Command
                 InputOption::VALUE_NONE,
                 'Don\'t trigger an error, when the database already exists'
             )
-            ->setHelp(<<<EOT
+            ->setHelp(<<<'EOT'
 The <info>%command.name%</info> command creates the default connections database:
 
     <info>php %command.full_name%</info>
@@ -53,7 +53,8 @@ You can also optionally specify the name of a connection to create the database 
 
     <info>php %command.full_name% --connection=default</info>
 EOT
-            );
+            )
+        ;
     }
 
     /**

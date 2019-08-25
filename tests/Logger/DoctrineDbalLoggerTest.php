@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Logger;
 
+use Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger
+ *
+ * @internal
  */
 class DoctrineDbalLoggerTest extends TestCase
 {

@@ -23,6 +23,8 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider
+ *
+ * @internal
  */
 class DoctrineDbalServiceProviderTest extends TestCase
 {

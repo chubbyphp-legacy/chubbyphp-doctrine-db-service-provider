@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\ValidateSchemaCommand
+ *
+ * @internal
  */
 class ValidateSchemaCommandTest extends TestCase
 {

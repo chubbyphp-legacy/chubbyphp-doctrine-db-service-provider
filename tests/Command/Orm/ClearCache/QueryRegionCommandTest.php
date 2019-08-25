@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\ClearCache\QueryRegionCommand
+ *
+ * @internal
  */
 class QueryRegionCommandTest extends TestCase
 {

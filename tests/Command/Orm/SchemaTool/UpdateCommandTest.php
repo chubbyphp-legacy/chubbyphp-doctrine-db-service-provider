@@ -12,6 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Chubbyphp\DoctrineDbServiceProvider\Command\Orm\SchemaTool\UpdateCommand
+ *
+ * @internal
  */
 class UpdateCommandTest extends TestCase
 {

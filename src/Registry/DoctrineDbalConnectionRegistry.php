@@ -61,9 +61,9 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     /**
      * @param string|null $name
      *
-     * @return Connection
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return Connection
      */
     public function getConnection($name = null): Connection
     {
@@ -85,7 +85,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     {
         $this->loadConnections();
 
-        $connections = array();
+        $connections = [];
         foreach ($this->connections->keys() as $name) {
             $connections[$name] = $this->connections[$name];
         }

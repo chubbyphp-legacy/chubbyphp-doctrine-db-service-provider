@@ -67,9 +67,9 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     /**
      * @param string|null $name
      *
-     * @return Connection
-     *
      * @throws \InvalidArgumentException
+     *
+     * @return Connection
      */
     public function getConnection($name = null): Connection
     {
@@ -91,7 +91,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         $this->loadConnections();
 
-        $connections = array();
+        $connections = [];
         foreach ($this->connections->keys() as $name) {
             $connections[$name] = $this->connections[$name];
         }
@@ -148,7 +148,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         $this->loadManagers();
 
-        $managers = array();
+        $managers = [];
         foreach ($this->originalManagers->keys() as $name) {
             if (isset($this->resetedManagers[$name])) {
                 $manager = $this->resetedManagers[$name];
@@ -201,9 +201,9 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     /**
      * @param string $alias
      *
-     * @return string
-     *
      * @throws ORMException
+     *
+     * @return string
      */
     public function getAliasNamespace($alias): string
     {

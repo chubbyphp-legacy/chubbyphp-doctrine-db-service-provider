@@ -39,7 +39,8 @@ trait DoctrineDbalConnectionTrait
                 'getDatabasePlatform',
                 'getParams',
             ])
-            ->getMockForAbstractClass();
+            ->getMockForAbstractClass()
+        ;
 
         $queryBuilderStack = $stacks['queryBuilder'] ?? [];
         $beginTransaction = $stacks['beginTransaction'] ?? 0;
@@ -72,15 +73,18 @@ trait DoctrineDbalConnectionTrait
                 );
 
                 return $queryBuilder;
-            });
+            })
+        ;
 
         $connection
             ->expects(self::exactly($beginTransaction))
-            ->method('beginTransaction');
+            ->method('beginTransaction')
+        ;
 
         $connection
             ->expects(self::exactly($commit))
-            ->method('commit');
+            ->method('commit')
+        ;
 
         $insertStackCounter = 0;
 
@@ -110,7 +114,8 @@ trait DoctrineDbalConnectionTrait
 
                     return $insert['return'];
                 }
-            );
+            )
+        ;
 
         $updateStackCounter = 0;
 
@@ -142,7 +147,8 @@ trait DoctrineDbalConnectionTrait
 
                     return $update['return'];
                 }
-            );
+            )
+        ;
 
         $deleteStackCounter = 0;
 
@@ -172,14 +178,15 @@ trait DoctrineDbalConnectionTrait
 
                     return $delete['return'];
                 }
-            );
+            )
+        ;
 
         $fetchAllCounter = 0;
 
         $connection
             ->expects(self::any())
             ->method('fetchAll')
-            ->willReturnCallback(function ($sql, array $params = array(), $types = array()) use (&$fetchAllStack, &$fetchAllCounter) {
+            ->willReturnCallback(function ($sql, array $params = [], $types = []) use (&$fetchAllStack, &$fetchAllCounter) {
                 ++$fetchAllCounter;
 
                 $fetchAll = array_shift($fetchAllStack);
@@ -196,14 +203,15 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($fetchAll['arguments']['types'], $types, sprintf('$fetchAllStack at call %d, argument: types', $fetchAllCounter));
 
                 return $fetchAll['return'];
-            });
+            })
+        ;
 
         $executeUpdateCounter = 0;
 
         $connection
             ->expects(self::any())
             ->method('executeUpdate')
-            ->willReturnCallback(function ($sql, array $params = array(), $types = array()) use (&$executeUpdateStack, &$executeUpdateCounter) {
+            ->willReturnCallback(function ($sql, array $params = [], $types = []) use (&$executeUpdateStack, &$executeUpdateCounter) {
                 ++$executeUpdateCounter;
 
                 $executeUpdate = array_shift($executeUpdateStack);
@@ -220,7 +228,8 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($executeUpdate['arguments']['types'], $types, sprintf('$executeUpdateStack at call %d, argument: types', $executeUpdateCounter));
 
                 return $executeUpdate['return'];
-            });
+            })
+        ;
 
         $execCounter = 0;
 
@@ -242,28 +251,32 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($exec['arguments'][0], $sql);
 
                 return $exec['return'];
-            });
+            })
+        ;
 
         $connection
             ->expects(self::any())
             ->method('getSchemaManager')
             ->willReturnCallback(function () use ($schemaManager) {
                 return $schemaManager;
-            });
+            })
+        ;
 
         $connection
             ->expects(self::any())
             ->method('getDatabasePlatform')
             ->willReturnCallback(function () use ($databasePlatform) {
                 return $databasePlatform;
-            });
+            })
+        ;
 
         $connection
             ->expects(self::any())
             ->method('getParams')
             ->willReturnCallback(function () use ($params) {
                 return $params;
-            });
+            })
+        ;
 
         return $connection;
     }
@@ -312,7 +325,8 @@ trait DoctrineDbalConnectionTrait
             ->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->setMethods(array_merge($modifiers, ['expr', 'execute']))
-            ->getMockForAbstractClass();
+            ->getMockForAbstractClass()
+        ;
 
         $queryBuilder->__calls = [];
 
@@ -328,7 +342,8 @@ trait DoctrineDbalConnectionTrait
                     $queryBuilder->__calls[$modifier][] = func_get_args();
 
                     return $queryBuilder;
-                });
+                })
+            ;
         }
 
         $queryBuilder
@@ -336,7 +351,8 @@ trait DoctrineDbalConnectionTrait
             ->method('expr')
             ->willReturnCallback(function () {
                 return $this->getExpressionBuilder();
-            });
+            })
+        ;
 
         $executeStackCounter = 0;
 
@@ -356,7 +372,8 @@ trait DoctrineDbalConnectionTrait
                 );
 
                 return $execute;
-            });
+            })
+        ;
 
         return $queryBuilder;
     }
@@ -390,7 +407,8 @@ trait DoctrineDbalConnectionTrait
             ->getMockBuilder(ExpressionBuilder::class)
             ->disableOriginalConstructor()
             ->setMethods($comparsions)
-            ->getMock();
+            ->getMock()
+        ;
 
         foreach ($comparsions as $comparsion) {
             $expr
@@ -398,7 +416,8 @@ trait DoctrineDbalConnectionTrait
                 ->method($comparsion)
                 ->willReturnCallback(function () use ($comparsion) {
                     return ['method' => $comparsion, 'arguments' => func_get_args()];
-                });
+                })
+            ;
         }
 
         return $expr;
@@ -416,7 +435,8 @@ trait DoctrineDbalConnectionTrait
         $stmt = $this
             ->getMockBuilder(Statement::class)
             ->setMethods(['fetch', 'fetchAll'])
-            ->getMockForAbstractClass();
+            ->getMockForAbstractClass()
+        ;
 
         $stmt
             ->expects(self::any())
@@ -425,7 +445,8 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($checkType, $type);
 
                 return $data;
-            });
+            })
+        ;
 
         $stmt
             ->expects(self::any())
@@ -434,7 +455,8 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($checkType, $type);
 
                 return $data;
-            });
+            })
+        ;
 
         return $stmt;
     }
@@ -451,7 +473,8 @@ trait DoctrineDbalConnectionTrait
             ->getMockBuilder(AbstractSchemaManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['createSchema', 'createDatabase', 'listDatabases'])
-            ->getMockForAbstractClass();
+            ->getMockForAbstractClass()
+        ;
 
         $createSchemaStack = $stacks['createSchema'] ?? [];
         $listDatabases = $stacks['listDatabases'] ?? [];
@@ -475,7 +498,8 @@ trait DoctrineDbalConnectionTrait
                 );
 
                 return $createSchema;
-            });
+            })
+        ;
 
         $createDatabaseStackCounter = 0;
 
@@ -499,14 +523,16 @@ trait DoctrineDbalConnectionTrait
                 if (isset($createDatabase['exception'])) {
                     throw $createDatabase['exception'];
                 }
-            });
+            })
+        ;
 
         $schemaManager
             ->expects(self::any())
             ->method('listDatabases')
             ->willReturnCallback(function () use ($listDatabases) {
                 return $listDatabases;
-            });
+            })
+        ;
 
         return $schemaManager;
     }
@@ -523,7 +549,8 @@ trait DoctrineDbalConnectionTrait
             ->getMockBuilder(Schema::class)
             ->disableOriginalConstructor()
             ->setMethods(['getMigrateToSql'])
-            ->getMock();
+            ->getMock()
+        ;
 
         $migrateToSqlStack = $stacks['migrateToSql'] ?? [];
 
@@ -548,7 +575,8 @@ trait DoctrineDbalConnectionTrait
                 self::assertSame($migrateToSql['arguments'][1], $platform);
 
                 return $migrateToSql['return'];
-            });
+            })
+        ;
 
         return $schema;
     }
@@ -563,14 +591,16 @@ trait DoctrineDbalConnectionTrait
             ->getMockBuilder(AbstractPlatform::class)
             ->disableOriginalConstructor()
             ->setMethods(['quoteSingleIdentifier'])
-            ->getMockForAbstractClass();
+            ->getMockForAbstractClass()
+        ;
 
         $platform
             ->expects(self::any())
             ->method('quoteSingleIdentifier')
             ->willReturnCallback(function ($str) {
                 return $str;
-            });
+            })
+        ;
 
         return $platform;
     }
