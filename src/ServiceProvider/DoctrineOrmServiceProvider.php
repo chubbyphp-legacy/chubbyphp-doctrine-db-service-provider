@@ -7,9 +7,11 @@ namespace Chubbyphp\DoctrineDbServiceProvider\ServiceProvider;
 use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver;
 use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry;
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\Common\Persistence\Mapping\Driver\PHPDriver;
 use Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Cache\CacheConfiguration;
 use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Cache\RegionsConfiguration;
@@ -44,6 +46,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $container['doctrine.orm.em'] = $this->getOrmEmDefinition($container);
         $container['doctrine.orm.em.config'] = $this->getOrmEmConfigDefinition($container);
         $container['doctrine.orm.em.default_options'] = $this->getOrmEmDefaultOptions();
+        $container['doctrine.orm.em.factory'] = $this->getOrmEmFactory($container);
         $container['doctrine.orm.ems'] = $this->getOrmEmsDefinition($container);
         $container['doctrine.orm.ems.config'] = $this->getOrmEmsConfigServiceProvider($container);
         $container['doctrine.orm.ems.options.initializer'] = $this->getOrmEmsOptionsInitializerDefinition($container);
@@ -126,6 +129,20 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
      *
      * @return callable
      */
+    private function getOrmEmFactory(Container $container): callable
+    {
+        return $container->protect(
+            function (Connection $connection, Configuration $config, EventManager $eventManager) {
+                return EntityManager::create($connection, $config, $eventManager);
+            }
+        );
+    }
+
+    /**
+     * @param Container $container
+     *
+     * @return callable
+     */
     private function getOrmEmsDefinition(Container $container): callable
     {
         return function () use ($container) {
@@ -140,7 +157,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
                 }
 
                 $ems[$name] = function () use ($container, $options, $config) {
-                    return EntityManager::create(
+                    return $container['doctrine.orm.em.factory'](
                         $container['doctrine.dbal.dbs'][$options['connection']],
                         $config,
                         $container['doctrine.dbal.dbs.event_manager'][$options['connection']]
