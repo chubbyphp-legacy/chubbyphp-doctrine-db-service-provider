@@ -128,9 +128,6 @@ class DoctrineOrmManagerRegistryTest extends TestCase
 
     public function testGetDefaultManagerName()
     {
-        /** @var EntityManager|MockObject $manager */
-        $manager = $this->getMockByCalls(EntityManager::class);
-
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
             Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn($this->getMockByCalls(Container::class)),
@@ -317,6 +314,11 @@ class DoctrineOrmManagerRegistryTest extends TestCase
                 ])
             ),
             Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('offsetGet')->with('doctrine.orm.em.factory')->willReturn(
+                function (Connection $connection, Configuration $config, EventManager $eventManager) {
+                    return EntityManager::create($connection, $config, $eventManager);
+                }
+            ),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -327,9 +329,6 @@ class DoctrineOrmManagerRegistryTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing manager with name "default".');
-
-        /** @var EntityManager|MockObject $manager */
-        $manager = $this->getMockByCalls(EntityManager::class);
 
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [

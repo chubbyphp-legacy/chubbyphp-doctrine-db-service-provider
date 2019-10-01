@@ -189,7 +189,10 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
 
         $originalManager = $this->originalManagers[$name];
 
-        $this->resetedManagers[$name] = EntityManager::create(
+        /** @var callable $entityManagerFactory */
+        $entityManagerFactory = $this->container['doctrine.orm.em.factory'];
+
+        $this->resetedManagers[$name] = $entityManagerFactory(
             $originalManager->getConnection(),
             $originalManager->getConfiguration(),
             $originalManager->getEventManager()
