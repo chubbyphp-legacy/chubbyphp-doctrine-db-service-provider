@@ -22,10 +22,7 @@ use Pimple\ServiceProviderInterface;
  */
 final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * @param Container $container
-     */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container['doctrine.dbal.connection_registry'] = $this->getDbConnectionRegistryDefintion($container);
         $container['doctrine.dbal.db'] = $this->getDbDefinition($container);
@@ -41,64 +38,39 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         $container['doctrine.dbal.types'] = [];
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbConnectionRegistryDefintion(Container $container): callable
     {
-        return function ($container) {
+        return static function () use ($container) {
             return new DoctrineDbalConnectionRegistry($container);
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $dbs = $container['doctrine.dbal.dbs'];
 
             return $dbs[$container['doctrine.dbal.dbs.default']];
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbApcuCacheFactoryDefinition(Container $container): callable
     {
-        return $container->protect(function (array $options) use ($container) {
+        return $container->protect(static function () {
             return new ApcuCache();
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbArrayCacheFactoryDefinition(Container $container): callable
     {
-        return $container->protect(function (array $options) use ($container) {
+        return $container->protect(static function () {
             return new ArrayCache();
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbConfigDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $dbs = $container['doctrine.dbal.dbs.config'];
 
             return $dbs[$container['doctrine.dbal.dbs.default']];
@@ -106,7 +78,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<string, array|string|float|int|bool>
      */
     private function getDbDefaultOptions(): array
     {
@@ -129,28 +101,18 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         ];
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbEventManagerDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $dbs = $container['doctrine.dbal.dbs.event_manager'];
 
             return $dbs[$container['doctrine.dbal.dbs.default']];
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbsDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $container['doctrine.dbal.dbs.options.initializer']();
 
             $dbs = new Container();
@@ -163,7 +125,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
                     $manager = $container['doctrine.dbal.dbs.event_manager'][$name];
                 }
 
-                $dbs[$name] = function () use ($options, $config, $manager) {
+                $dbs[$name] = static function () use ($options, $config, $manager) {
                     return DriverManager::getConnection($options['connection'], $config, $manager);
                 };
             }
@@ -172,11 +134,6 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbsConfigDefinition(Container $container): callable
     {
         return function () use ($container) {
@@ -186,7 +143,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
             $configs = new Container();
             foreach ($container['doctrine.dbal.dbs.options'] as $name => $options) {
-                $configs[$name] = function () use ($addLogger, $container, $name, $options) {
+                $configs[$name] = function () use ($addLogger, $container, $options) {
                     $configOptions = $options['configuration'];
 
                     $config = new Configuration();
@@ -208,13 +165,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         };
     }
 
-    /**
-     * @param Container    $container
-     * @param string|array $cacheDefinition
-     *
-     * @return Cache
-     */
-    private function getCache(Container $container, $cacheDefinition): Cache
+    private function getCache(Container $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];
         $cacheOptions = $cacheDefinition['options'] ?? [];
@@ -224,19 +175,14 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         return $cacheFactory($cacheOptions);
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbsEventManagerDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $container['doctrine.dbal.dbs.options.initializer']();
 
             $managers = new Container();
-            foreach ($container['doctrine.dbal.dbs.options'] as $name => $options) {
-                $managers[$name] = function () {
+            foreach (array_keys($container['doctrine.dbal.dbs.options']) as $name) {
+                $managers[$name] = static function () {
                     return new EventManager();
                 };
             }
@@ -245,14 +191,9 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getDbsOptionsInitializerDefinition(Container $container): callable
     {
-        return $container->protect(function () use ($container) {
+        return $container->protect(static function () use ($container): void {
             static $initialized = false;
 
             if ($initialized) {

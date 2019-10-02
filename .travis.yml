@@ -2,14 +2,6 @@ language: php
 
 matrix:
   include:
-    - php: 7.0
-      env: dependencies=lowest
-    - php: 7.0
-      env: dependencies=highest
-    - php: 7.1
-      env: dependencies=lowest
-    - php: 7.1
-      env: dependencies=highest
     - php: 7.2
       env: dependencies=lowest
     - php: 7.2
@@ -35,7 +27,15 @@ before_script:
   - if [ "$dependencies" = "lowest" ]; then composer update --prefer-lowest -n; fi;
   - if [ "$dependencies" = "highest" ]; then composer update -n; fi;
 
-script: vendor/bin/phpunit --testsuite=Unit --coverage-text --verbose && vendor/bin/phpunit --testsuite=Integration --verbose
+script:
+  - vendor/bin/phpunit --coverage-text --verbose
+  - vendor/bin/infection --threads=$(nproc) --min-msi=79 --verbose
+  - vendor/bin/phpstan analyse
+  - vendor/bin/phploc src --verbose
+  - vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation
+  - if [ -z "$dependencies" ]; then vendor/bin/phpinsights analyse --no-interaction --min-quality=93; fi;
+  - if [ "$dependencies" = "highest" ]; then vendor/bin/phpinsights analyse --no-interaction --min-quality=93; fi;
+  - if [ "$dependencies" = "lowest" ]; then vendor/bin/phpinsights analyse --no-interaction --min-quality=93 --disable-security-check; fi;
 
 services:
   - mysql

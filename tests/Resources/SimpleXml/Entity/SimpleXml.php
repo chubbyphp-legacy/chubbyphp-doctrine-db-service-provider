@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\SimpleXml\Entity;
 
-class SimpleXml
+final class SimpleXml
 {
     /**
      * @var string

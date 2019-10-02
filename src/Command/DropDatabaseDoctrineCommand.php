@@ -26,9 +26,6 @@ final class DropDatabaseDoctrineCommand extends Command
      */
     private $connectionRegistry;
 
-    /**
-     * @param ConnectionRegistry $connectionRegistry
-     */
     public function __construct(ConnectionRegistry $connectionRegistry)
     {
         parent::__construct();
@@ -36,7 +33,7 @@ final class DropDatabaseDoctrineCommand extends Command
         $this->connectionRegistry = $connectionRegistry;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('dbal:database:drop')
@@ -66,21 +63,16 @@ EOT
         ;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $connectionName = $this->getConnectionName($input);
 
+        /** @var Connection $connection */
         $connection = $this->connectionRegistry->getConnection($connectionName);
 
         $params = $this->getParams($connection);
 
-        $dbName = $this->getDbName($params, $connectionName);
+        $dbName = $this->getDbName($params);
 
         if (!$input->getOption('force')) {
             $this->writeMissingForceOutput($output, $dbName, $connectionName);
@@ -107,13 +99,9 @@ EOT
         return $this->dropDatabase($output, $connectionName, $connection, $dbName, $shouldDropDatabase);
     }
 
-    /**
-     * @param InputInterface $input
-     *
-     * @return string
-     */
     private function getConnectionName(InputInterface $input): string
     {
+        /** @var string|null $connectionName */
         $connectionName = $input->getOption('connection');
 
         if (null !== $connectionName) {
@@ -123,11 +111,6 @@ EOT
         return $this->connectionRegistry->getDefaultConnectionName();
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return array
-     */
     private function getParams(Connection $connection): array
     {
         $params = $connection->getParams();
@@ -139,12 +122,11 @@ EOT
     }
 
     /**
-     * @param array  $params
-     * @param string $connectionName
+     * @param array<string, string> $params
      *
      * @return string
      */
-    private function getDbName(array $params, string $connectionName): string
+    private function getDbName(array $params): string
     {
         if (isset($params['path'])) {
             return $params['path'];
@@ -157,12 +139,7 @@ EOT
         throw new \InvalidArgumentException('Connection does not contain a \'path\' or \'dbname\' parameter.');
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param string          $dbName
-     * @param string          $connectionName
-     */
-    private function writeMissingForceOutput(OutputInterface $output, string $dbName, string $connectionName)
+    private function writeMissingForceOutput(OutputInterface $output, string $dbName, string $connectionName): void
     {
         $output->writeln(
             '<error>ATTENTION:</error> This operation should not be executed in a production environment.'
@@ -180,15 +157,6 @@ EOT
         $output->writeln('<error>All data will be lost!</error>');
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param string          $connectionName
-     * @param Connection      $connection
-     * @param string          $dbName
-     * @param bool            $shouldNotCreateDatabase
-     *
-     * @return int
-     */
     private function dropDatabase(
         OutputInterface $output,
         string $connectionName,
@@ -217,7 +185,7 @@ EOT
                     )
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $output->writeln(
                 sprintf(
                     '<error>Could not drop database <comment>%s</comment> for connection'
@@ -226,7 +194,7 @@ EOT
                     $connectionName
                 )
             );
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
 
             return self::RETURN_CODE_NOT_DROP;
         }

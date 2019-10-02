@@ -22,9 +22,6 @@ final class CreateDatabaseDoctrineCommand extends Command
      */
     private $connectionRegistry;
 
-    /**
-     * @param ConnectionRegistry $connectionRegistry
-     */
     public function __construct(ConnectionRegistry $connectionRegistry)
     {
         parent::__construct();
@@ -32,7 +29,7 @@ final class CreateDatabaseDoctrineCommand extends Command
         $this->connectionRegistry = $connectionRegistry;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('dbal:database:create')
@@ -57,21 +54,16 @@ EOT
         ;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $connectionName = $this->getConnectionName($input);
 
+        /** @var Connection $connection */
         $connection = $this->connectionRegistry->getConnection($connectionName);
 
         $params = $this->getParams($connection);
 
-        $dbName = $this->getDbName($params, $connectionName);
+        $dbName = $this->getDbName($params);
 
         $isPath = isset($params['path']);
 
@@ -81,7 +73,8 @@ EOT
         unset($params['dbname'], $params['path'], $params['url']);
 
         $tmpConnection = DriverManager::getConnection($params);
-        $shouldNotCreateDatabase = $ifNotExists && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
+        $shouldNotCreateDatabase = $ifNotExists &&
+            in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
         if (!$isPath) {
@@ -91,13 +84,9 @@ EOT
         return $this->createDatabase($output, $connectionName, $tmpConnection, $dbName, $shouldNotCreateDatabase);
     }
 
-    /**
-     * @param InputInterface $input
-     *
-     * @return string
-     */
     private function getConnectionName(InputInterface $input): string
     {
+        /** @var string|null $connectionName */
         $connectionName = $input->getOption('connection');
 
         if (null !== $connectionName) {
@@ -107,11 +96,6 @@ EOT
         return $this->connectionRegistry->getDefaultConnectionName();
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return array
-     */
     private function getParams(Connection $connection): array
     {
         $params = $connection->getParams();
@@ -123,12 +107,11 @@ EOT
     }
 
     /**
-     * @param array  $params
-     * @param string $connectionName
+     * @param array<string, string> $params
      *
      * @return string
      */
-    private function getDbName(array $params, string $connectionName): string
+    private function getDbName(array $params): string
     {
         if (isset($params['path'])) {
             return $params['path'];
@@ -141,15 +124,6 @@ EOT
         throw new \InvalidArgumentException('Connection does not contain a \'path\' or \'dbname\' parameter.');
     }
 
-    /**
-     * @param OutputInterface $output
-     * @param string          $connectionName
-     * @param Connection      $tmpConnection
-     * @param string          $dbName
-     * @param bool            $shouldNotCreateDatabase
-     *
-     * @return int
-     */
     private function createDatabase(
         OutputInterface $output,
         string $connectionName,
@@ -180,9 +154,9 @@ EOT
             }
 
             return 0;
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $output->writeln(sprintf('<error>Could not create database <comment>%s</comment>.</error>', $dbName));
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
 
             return 1;
         }

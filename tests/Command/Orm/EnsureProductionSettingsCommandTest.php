@@ -15,11 +15,11 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  */
-class EnsureProductionSettingsCommandTest extends TestCase
+final class EnsureProductionSettingsCommandTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testInstanceOf()
+    public function testInstanceOf(): void
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockByCalls(ManagerRegistry::class);

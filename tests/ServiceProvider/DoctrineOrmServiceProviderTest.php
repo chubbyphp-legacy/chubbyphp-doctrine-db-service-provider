@@ -43,11 +43,11 @@ use Psr\Log\LoggerInterface;
  *
  * @internal
  */
-class DoctrineOrmServiceProviderTest extends TestCase
+final class DoctrineOrmServiceProviderTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testRegisterWithDefaults()
+    public function testRegisterWithDefaults(): void
     {
         $container = new Container();
 
@@ -218,7 +218,7 @@ class DoctrineOrmServiceProviderTest extends TestCase
         self::assertSame($config->getQuoteStrategy(), $container['doctrine.orm.strategy.quote.default']);
     }
 
-    public function testRegisterWithOneManager()
+    public function testRegisterWithOneManager(): void
     {
         $container = new Container();
 
@@ -351,7 +351,7 @@ class DoctrineOrmServiceProviderTest extends TestCase
         );
     }
 
-    public function testRegisterWithMultipleManager()
+    public function testRegisterWithMultipleManager(): void
     {
         $container = new Container();
 

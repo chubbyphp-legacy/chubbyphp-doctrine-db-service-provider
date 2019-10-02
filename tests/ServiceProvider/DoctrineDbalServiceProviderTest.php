@@ -26,11 +26,11 @@ use Psr\Log\LoggerInterface;
  *
  * @internal
  */
-class DoctrineDbalServiceProviderTest extends TestCase
+final class DoctrineDbalServiceProviderTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testRegisterWithDefaults()
+    public function testRegisterWithDefaults(): void
     {
         $container = new Container();
 
@@ -130,7 +130,7 @@ class DoctrineDbalServiceProviderTest extends TestCase
         self::assertSame([], $container['doctrine.dbal.types']);
     }
 
-    public function testRegisterWithOneConnetion()
+    public function testRegisterWithOneConnetion(): void
     {
         $container = new Container();
 
@@ -192,7 +192,7 @@ class DoctrineDbalServiceProviderTest extends TestCase
         self::assertSame($directory, $resultCache->getDirectory());
     }
 
-    public function testRegisterWithMultipleConnetions()
+    public function testRegisterWithMultipleConnetions(): void
     {
         $container = new Container();
 

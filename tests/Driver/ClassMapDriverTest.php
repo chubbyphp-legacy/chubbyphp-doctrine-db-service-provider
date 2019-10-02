@@ -18,11 +18,11 @@ use PHPUnit\Framework\TestCase;
  *
  * @internal
  */
-class ClassMapDriverTest extends TestCase
+final class ClassMapDriverTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testLoadMetadataForClass()
+    public function testLoadMetadataForClass(): void
     {
         $object = $this->getObject();
         $class = get_class($object);
@@ -39,7 +39,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithInvalidClassMetadata()
+    public function testLoadMetadataForClassWithInvalidClassMetadata(): void
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessageRegExp(
@@ -56,7 +56,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithMissingMapping()
+    public function testLoadMetadataForClassWithMissingMapping(): void
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessage('No configured mapping for document "stdClass"');
@@ -69,7 +69,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass(\stdClass::class, $classMetadata);
     }
 
-    public function testLoadMetadataForClassWithInvalidMapping()
+    public function testLoadMetadataForClassWithInvalidMapping(): void
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessageRegExp(
@@ -87,7 +87,7 @@ class ClassMapDriverTest extends TestCase
         $classMapDriver->loadMetadataForClass($class, $classMetadata);
     }
 
-    public function testGetAllClassNames()
+    public function testGetAllClassNames(): void
     {
         $object = $this->getObject();
         $class = get_class($object);
@@ -99,7 +99,7 @@ class ClassMapDriverTest extends TestCase
         self::assertEquals([$class], $classMapDriver->getAllClassNames());
     }
 
-    public function testIsTransient()
+    public function testIsTransient(): void
     {
         $object = $this->getObject();
         $class = get_class($object);
@@ -132,7 +132,7 @@ class ClassMapDriverTest extends TestCase
              *
              * @throws MappingException
              */
-            public function configureMapping(ClassMetadata $metadata)
+            public function configureMapping(ClassMetadata $metadata): void
             {
                 $metadata->mapField(['fieldName' => 'key', 'type' => 'string']);
             }

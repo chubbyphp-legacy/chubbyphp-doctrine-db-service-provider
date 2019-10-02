@@ -21,11 +21,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @internal
  */
-class DoctrineOrmCommandTraitTest extends TestCase
+final class DoctrineOrmCommandTraitTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testRun()
+    public function testRun(): void
     {
         $input = new ArrayInput([
             '--em' => 'test',
@@ -53,7 +53,7 @@ class DoctrineOrmCommandTraitTest extends TestCase
 
 abstract class BaseCommand extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('test');
     }

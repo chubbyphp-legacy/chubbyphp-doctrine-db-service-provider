@@ -16,7 +16,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     private $container;
 
     /**
-     * @var Container|Connection[]
+     * @var Container
      */
     private $connections;
 
@@ -25,32 +25,11 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
      */
     private $defaultConnectionName;
 
-    /**
-     * @var Container|EntityManager[]
-     */
-    private $originalManagers;
-
-    /**
-     * @var EntityManager[]
-     */
-    private $resetedManagers = [];
-
-    /**
-     * @var string
-     */
-    private $defaultManagerName;
-
-    /**
-     * @param Container $container
-     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultConnectionName(): string
     {
         $this->loadConnections();
@@ -79,22 +58,25 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     }
 
     /**
-     * @return Connection[]
+     * @return array<string, Connection>
      */
     public function getConnections(): array
     {
         $this->loadConnections();
 
         $connections = [];
+        /** @var string $name */
         foreach ($this->connections->keys() as $name) {
-            $connections[$name] = $this->connections[$name];
+            /** @var Connection $connection */
+            $connection = $this->connections[$name];
+            $connections[$name] = $connection;
         }
 
         return $connections;
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getConnectionNames(): array
     {
@@ -103,7 +85,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
         return $this->connections->keys();
     }
 
-    private function loadConnections()
+    private function loadConnections(): void
     {
         if (null === $this->connections) {
             $this->connections = $this->container['doctrine.dbal.dbs'];

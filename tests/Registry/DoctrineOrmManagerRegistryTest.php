@@ -25,11 +25,11 @@ use Pimple\Container;
  *
  * @internal
  */
-class DoctrineOrmManagerRegistryTest extends TestCase
+final class DoctrineOrmManagerRegistryTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testGetDefaultConnectionName()
+    public function testGetDefaultConnectionName(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
@@ -42,7 +42,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame('default', $registry->getDefaultConnectionName());
     }
 
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
@@ -63,7 +63,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame($connection, $registry->getConnection());
     }
 
-    public function testGetMissingConnection()
+    public function testGetMissingConnection(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing connection with name "default".');
@@ -82,7 +82,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         $registry->getConnection();
     }
 
-    public function testGetConnections()
+    public function testGetConnections(): void
     {
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
@@ -102,14 +102,14 @@ class DoctrineOrmManagerRegistryTest extends TestCase
 
         $connections = $registry->getConnections();
 
-        self::assertInternalType('array', $connections);
+        self::assertIsArray($connections);
 
         self::assertCount(1, $connections);
 
         self::assertSame($connection, $connections['default']);
     }
 
-    public function testGetConnectionNames()
+    public function testGetConnectionNames(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
@@ -126,7 +126,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame(['default'], $registry->getConnectionNames());
     }
 
-    public function testGetDefaultManagerName()
+    public function testGetDefaultManagerName(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
@@ -139,7 +139,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame('default', $registry->getDefaultManagerName());
     }
 
-    public function testGetManager()
+    public function testGetManager(): void
     {
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
@@ -160,7 +160,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame($manager, $registry->getManager());
     }
 
-    public function testGetResetedManager()
+    public function testGetResetedManager(): void
     {
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
@@ -184,7 +184,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame($manager, $registry->getManager());
     }
 
-    public function testGetMissingManager()
+    public function testGetMissingManager(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing manager with name "default".');
@@ -203,7 +203,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         $registry->getManager();
     }
 
-    public function testGetManagers()
+    public function testGetManagers(): void
     {
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
@@ -223,14 +223,14 @@ class DoctrineOrmManagerRegistryTest extends TestCase
 
         $managers = $registry->getManagers();
 
-        self::assertInternalType('array', $managers);
+        self::assertIsArray($managers);
 
         self::assertCount(1, $managers);
 
         self::assertSame($manager, $managers['default']);
     }
 
-    public function testGetResetedManagers()
+    public function testGetResetedManagers(): void
     {
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
@@ -253,14 +253,14 @@ class DoctrineOrmManagerRegistryTest extends TestCase
 
         $managers = $registry->getManagers();
 
-        self::assertInternalType('array', $managers);
+        self::assertIsArray($managers);
 
         self::assertCount(1, $managers);
 
         self::assertSame($manager, $managers['default']);
     }
 
-    public function testGetManagerNames()
+    public function testGetManagerNames(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
@@ -277,7 +277,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame(['default'], $registry->getManagerNames());
     }
 
-    public function testResetManager()
+    public function testResetManager(): void
     {
         /** @var EventManager|MockObject $eventManager */
         $eventManager = $this->getMockByCalls(EventManager::class);
@@ -325,7 +325,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         $registry->resetManager();
     }
 
-    public function testResetMissingManager()
+    public function testResetMissingManager(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing manager with name "default".');
@@ -344,7 +344,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         $registry->resetManager();
     }
 
-    public function testGetAliasNamespace()
+    public function testGetAliasNamespace(): void
     {
         /** @var Configuration|MockObject $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
@@ -373,7 +373,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame('original', $registry->getAliasNamespace('alias'));
     }
 
-    public function testGetAliasNamespaceWithOrmException()
+    public function testGetAliasNamespaceWithOrmException(): void
     {
         $this->expectException(ORMException::class);
         $this->expectExceptionMessage('Unknown Entity namespace alias \'alias\'.');
@@ -400,7 +400,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame('original', $registry->getAliasNamespace('alias'));
     }
 
-    public function testGetRepository()
+    public function testGetRepository(): void
     {
         /** @var EntityRepository|MockObject $repository */
         $repository = $this->getMockByCalls(EntityRepository::class);
@@ -426,7 +426,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame($repository, $registry->getRepository(\stdClass::class, 'default'));
     }
 
-    public function testGetManagerForClassFound()
+    public function testGetManagerForClassFound(): void
     {
         /** @var ClassMetadataFactory|MockObject $classMetadataFactory */
         $classMetadataFactory = $this->getMockByCalls(ClassMetadataFactory::class, [
@@ -455,7 +455,7 @@ class DoctrineOrmManagerRegistryTest extends TestCase
         self::assertSame($manager, $registry->getManagerForClass(SampleProxy::class));
     }
 
-    public function testGetManagerForClassNotFound()
+    public function testGetManagerForClassNotFound(): void
     {
         /** @var ClassMetadataFactory|MockObject $classMetadataFactory */
         $classMetadataFactory = $this->getMockByCalls(ClassMetadataFactory::class, [
@@ -489,9 +489,9 @@ class Sample
 {
 }
 
-class SampleProxy extends Sample implements Proxy
+final class SampleProxy extends Sample implements Proxy
 {
-    public function __load()
+    public function __load(): void
     {
     }
 

@@ -12,12 +12,12 @@ use Doctrine\ORM\Mapping\MappingException;
 class ClassMapDriver implements MappingDriver
 {
     /**
-     * @var array|string[]
+     * @var array<string, string>
      */
     private $classMap;
 
     /**
-     * @param array|string[] $classMap
+     * @param array<string, string> $classMap
      */
     public function __construct(array $classMap)
     {
@@ -30,7 +30,7 @@ class ClassMapDriver implements MappingDriver
      *
      * @throws MappingException
      */
-    public function loadMetadataForClass($className, ClassMetadataInterface $metadata)
+    public function loadMetadataForClass($className, ClassMetadataInterface $metadata): void
     {
         if (false === $metadata instanceof ClassMetadata) {
             throw new MappingException(
@@ -56,7 +56,7 @@ class ClassMapDriver implements MappingDriver
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getAllClassNames(): array
     {

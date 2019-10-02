@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chubbyphp\DoctrineDbServiceProvider\Command\Orm;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,9 +19,6 @@ trait DoctrineOrmCommandTrait
      */
     private $managerRegistry;
 
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         parent::__construct();
@@ -28,7 +26,7 @@ trait DoctrineOrmCommandTrait
         $this->managerRegistry = $managerRegistry;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
 
@@ -40,14 +38,12 @@ trait DoctrineOrmCommandTrait
         );
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
+        /** @var string|null $name */
         $name = $input->getOption('em');
 
+        /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->managerRegistry->getManager($name);
 
         $this->setHelperSet(new HelperSet(['em' => new EntityManagerHelper($entityManager)]));

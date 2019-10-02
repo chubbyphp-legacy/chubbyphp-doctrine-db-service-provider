@@ -6,7 +6,7 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\StaticPhp\Entity;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-class StaticPhp
+final class StaticPhp
 {
     /**
      * @var string
@@ -23,7 +23,7 @@ class StaticPhp
      *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
-    public static function loadMetadata(ClassMetadata $metadata)
+    public static function loadMetadata(ClassMetadata $metadata): void
     {
         $metadata->setPrimaryTable(['name' => 'static_php']);
 

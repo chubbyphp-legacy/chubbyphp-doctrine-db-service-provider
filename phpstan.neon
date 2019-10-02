@@ -1,0 +1,11 @@
+parameters:
+    level: 7
+    paths:
+        - src
+    ignoreErrors: []
+#        -
+#            message: '/Parameter #1 \$name of method Doctrine\\Common\\Persistence\\ManagerRegistry::getManager\(\) expects string|null, array<string>|bool|string|null given\./'
+#            path: %currentWorkingDirectory%/src/Command/Orm/DoctrineOrmCommandTrait.php
+#        -
+#            message: '/Parameter #1 \$em of class Doctrine\\ORM\\Tools\\Console\\Helper\\EntityManagerHelper constructor expects Doctrine\\ORM\\EntityManagerInterface, Doctrine\\Common\\Persistence\\ObjectManager given\./'
+#            path: %currentWorkingDirectory%/src/Command/Orm/DoctrineOrmCommandTrait.php

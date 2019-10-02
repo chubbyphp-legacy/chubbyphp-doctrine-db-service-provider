@@ -506,7 +506,7 @@ trait DoctrineDbalConnectionTrait
         $schemaManager
             ->expects(self::any())
             ->method('createDatabase')
-            ->willReturnCallback(function (string $database) use (&$createDatabaseStack, &$createDatabaseStackCounter) {
+            ->willReturnCallback(function (string $database) use (&$createDatabaseStack, &$createDatabaseStackCounter): void {
                 ++$createDatabaseStackCounter;
 
                 $createDatabase = array_shift($createDatabaseStack);

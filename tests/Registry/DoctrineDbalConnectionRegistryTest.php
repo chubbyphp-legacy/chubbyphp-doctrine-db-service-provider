@@ -17,11 +17,11 @@ use Pimple\Container;
  *
  * @internal
  */
-class DoctrineDbalConnectionRegistryTest extends TestCase
+final class DoctrineDbalConnectionRegistryTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testGetDefaultConnectionName()
+    public function testGetDefaultConnectionName(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
@@ -34,7 +34,7 @@ class DoctrineDbalConnectionRegistryTest extends TestCase
         self::assertSame('default', $registry->getDefaultConnectionName());
     }
 
-    public function testGetConnection()
+    public function testGetConnection(): void
     {
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
@@ -55,7 +55,7 @@ class DoctrineDbalConnectionRegistryTest extends TestCase
         self::assertSame($connection, $registry->getConnection());
     }
 
-    public function testGetMissingConnection()
+    public function testGetMissingConnection(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing connection with name "default".');
@@ -74,7 +74,7 @@ class DoctrineDbalConnectionRegistryTest extends TestCase
         $registry->getConnection();
     }
 
-    public function testGetConnections()
+    public function testGetConnections(): void
     {
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
@@ -94,14 +94,14 @@ class DoctrineDbalConnectionRegistryTest extends TestCase
 
         $connections = $registry->getConnections();
 
-        self::assertInternalType('array', $connections);
+        self::assertIsArray($connections);
 
         self::assertCount(1, $connections);
 
         self::assertSame($connection, $connections['default']);
     }
 
-    public function testGetConnectionNames()
+    public function testGetConnectionNames(): void
     {
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [

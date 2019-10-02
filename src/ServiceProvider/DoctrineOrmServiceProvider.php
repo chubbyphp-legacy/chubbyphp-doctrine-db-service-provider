@@ -36,12 +36,7 @@ use Pimple\ServiceProviderInterface;
  */
 final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 {
-    /**
-     * Register ORM service.
-     *
-     * @param Container $container
-     */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container['doctrine.orm.em'] = $this->getOrmEmDefinition($container);
         $container['doctrine.orm.em.config'] = $this->getOrmEmConfigDefinition($container);
@@ -50,44 +45,39 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $container['doctrine.orm.ems'] = $this->getOrmEmsDefinition($container);
         $container['doctrine.orm.ems.config'] = $this->getOrmEmsConfigServiceProvider($container);
         $container['doctrine.orm.ems.options.initializer'] = $this->getOrmEmsOptionsInitializerDefinition($container);
-        $container['doctrine.orm.entity.listener_resolver.default'] = $this->getOrmEntityListenerResolverDefinition($container);
+        $container['doctrine.orm.entity.listener_resolver.default'] = $this->getOrmEntityListenerResolverDefinition();
         $container['doctrine.orm.manager_registry'] = $this->getOrmManagerRegistryDefintion($container);
-        $container['doctrine.orm.mapping_driver.factory.annotation'] = $this->getOrmMappingDriverFactoryAnnotation($container);
-        $container['doctrine.orm.mapping_driver.factory.class_map'] = $this->getOrmMappingDriverFactoryClassMap($container);
+        $container['doctrine.orm.mapping_driver.factory.annotation'] =
+            $this->getOrmMappingDriverFactoryAnnotation($container);
+        $container['doctrine.orm.mapping_driver.factory.class_map'] =
+            $this->getOrmMappingDriverFactoryClassMap($container);
         $container['doctrine.orm.mapping_driver.factory.php'] = $this->getOrmMappingDriverFactoryPhp($container);
-        $container['doctrine.orm.mapping_driver.factory.simple_xml'] = $this->getOrmMappingDriverFactorySimpleXml($container);
-        $container['doctrine.orm.mapping_driver.factory.simple_yaml'] = $this->getOrmMappingDriverFactorySimpleYaml($container);
-        $container['doctrine.orm.mapping_driver.factory.static_php'] = $this->getOrmMappingDriverFactoryStaticPhp($container);
+        $container['doctrine.orm.mapping_driver.factory.simple_xml'] =
+            $this->getOrmMappingDriverFactorySimpleXml($container);
+        $container['doctrine.orm.mapping_driver.factory.simple_yaml'] =
+            $this->getOrmMappingDriverFactorySimpleYaml($container);
+        $container['doctrine.orm.mapping_driver.factory.static_php'] =
+            $this->getOrmMappingDriverFactoryStaticPhp($container);
         $container['doctrine.orm.mapping_driver.factory.xml'] = $this->getOrmMappingDriverFactoryXml($container);
         $container['doctrine.orm.mapping_driver.factory.yaml'] = $this->getOrmMappingDriverFactoryYaml($container);
         $container['doctrine.orm.mapping_driver_chain'] = $this->getOrmMappingDriverChainDefinition($container);
-        $container['doctrine.orm.repository.factory.default'] = $this->getOrmRepositoryFactoryDefinition($container);
-        $container['doctrine.orm.strategy.naming.default'] = $this->getOrmNamingStrategyDefinition($container);
-        $container['doctrine.orm.strategy.quote.default'] = $this->getOrmQuoteStrategyDefinition($container);
+        $container['doctrine.orm.repository.factory.default'] = $this->getOrmRepositoryFactoryDefinition();
+        $container['doctrine.orm.strategy.naming.default'] = $this->getOrmNamingStrategyDefinition();
+        $container['doctrine.orm.strategy.quote.default'] = $this->getOrmQuoteStrategyDefinition();
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $ems = $container['doctrine.orm.ems'];
 
             return $ems[$container['doctrine.orm.ems.default']];
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmConfigDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $configs = $container['doctrine.orm.ems.config'];
 
             return $configs[$container['doctrine.orm.ems.default']];
@@ -95,7 +85,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * @return array
+     * @return array<string, array|string|float|int|bool>
      */
     private function getOrmEmDefaultOptions(): array
     {
@@ -124,28 +114,18 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         ];
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmFactory(Container $container): callable
     {
         return $container->protect(
-            function (Connection $connection, Configuration $config, EventManager $eventManager) {
+            static function (Connection $connection, Configuration $config, EventManager $eventManager) {
                 return EntityManager::create($connection, $config, $eventManager);
             }
         );
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmsDefinition(Container $container): callable
     {
-        return function () use ($container) {
+        return static function () use ($container) {
             $container['doctrine.orm.ems.options.initializer']();
 
             $ems = new Container();
@@ -156,7 +136,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
                     $config = $container['doctrine.orm.ems.config'][$name];
                 }
 
-                $ems[$name] = function () use ($container, $options, $config) {
+                $ems[$name] = static function () use ($container, $options, $config) {
                     return $container['doctrine.orm.em.factory'](
                         $container['doctrine.dbal.dbs'][$options['connection']],
                         $config,
@@ -169,11 +149,6 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmsConfigServiceProvider(Container $container): callable
     {
         return function () use ($container) {
@@ -239,13 +214,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         };
     }
 
-    /**
-     * @param Container    $container
-     * @param string|array $cacheDefinition
-     *
-     * @return Cache
-     */
-    private function getCache(Container $container, $cacheDefinition): Cache
+    private function getCache(Container $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];
         $cacheOptions = $cacheDefinition['options'] ?? [];
@@ -255,12 +224,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         return $cacheFactory($cacheOptions);
     }
 
-    /**
-     * @param Container     $container
-     * @param Configuration $config
-     * @param array         $options
-     */
-    private function assignSecondLevelCache(Container $container, Configuration $config, array $options)
+    private function assignSecondLevelCache(Container $container, Configuration $config, array $options): void
     {
         if (!$options['second_level_cache.enabled']) {
             $config->setSecondLevelCacheEnabled(false);
@@ -282,14 +246,9 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $config->setSecondLevelCacheConfiguration($cacheConfiguration);
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmEmsOptionsInitializerDefinition(Container $container): callable
     {
-        return $container->protect(function () use ($container) {
+        return $container->protect(static function () use ($container): void {
             static $initialized = false;
 
             if ($initialized) {
@@ -317,74 +276,44 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
-    private function getOrmEntityListenerResolverDefinition(Container $container): callable
+    private function getOrmEntityListenerResolverDefinition(): callable
     {
-        return function () use ($container) {
+        return static function () {
             return new DefaultEntityListenerResolver();
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmManagerRegistryDefintion(Container $container): callable
     {
-        return function ($container) {
+        return static function () use ($container) {
             return new DoctrineOrmManagerRegistry($container);
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryAnnotation(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping, Configuration $config) {
             return $config->newDefaultAnnotationDriver((array) $mapping['path'], false);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryClassMap(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new ClassMapDriver($mapping['map']);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryPhp(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new PHPDriver($mapping['path']);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactorySimpleYaml(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new SimplifiedYamlDriver(
                 [$mapping['path'] => $mapping['namespace']],
                 $mapping['extension'] ?? SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION
@@ -392,14 +321,9 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactorySimpleXml(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new SimplifiedXmlDriver(
                 [$mapping['path'] => $mapping['namespace']],
                 $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
@@ -407,50 +331,30 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryStaticPhp(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new StaticPHPDriver($mapping['path']);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryYaml(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new YamlDriver($mapping['path'], $mapping['extension'] ?? YamlDriver::DEFAULT_FILE_EXTENSION);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverFactoryXml(Container $container): callable
     {
-        return $container->protect(function (array $mapping, Configuration $config) {
+        return $container->protect(static function (array $mapping) {
             return new XmlDriver($mapping['path'], $mapping['extension'] ?? XmlDriver::DEFAULT_FILE_EXTENSION);
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
     private function getOrmMappingDriverChainDefinition(Container $container): callable
     {
-        return $container->protect(function (Configuration $config, array $mappings) use ($container) {
+        return $container->protect(static function (Configuration $config, array $mappings) use ($container) {
             $chain = new MappingDriverChain();
             foreach ($mappings as $mapping) {
                 if (isset($mapping['alias'])) {
@@ -466,38 +370,23 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         });
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
-    private function getOrmRepositoryFactoryDefinition(Container $container): callable
+    private function getOrmRepositoryFactoryDefinition(): callable
     {
-        return function () use ($container) {
+        return static function () {
             return new DefaultRepositoryFactory();
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
-    private function getOrmNamingStrategyDefinition(Container $container): callable
+    private function getOrmNamingStrategyDefinition(): callable
     {
-        return function () use ($container) {
+        return static function () {
             return new DefaultNamingStrategy();
         };
     }
 
-    /**
-     * @param Container $container
-     *
-     * @return callable
-     */
-    private function getOrmQuoteStrategyDefinition(Container $container): callable
+    private function getOrmQuoteStrategyDefinition(): callable
     {
-        return function () use ($container) {
+        return static function () {
             return new DefaultQuoteStrategy();
         };
     }

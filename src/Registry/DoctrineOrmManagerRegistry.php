@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
 use Pimple\Container;
@@ -22,7 +22,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     private $container;
 
     /**
-     * @var Container|Connection[]
+     * @var Container
      */
     private $connections;
 
@@ -32,12 +32,12 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     private $defaultConnectionName;
 
     /**
-     * @var Container|EntityManager[]
+     * @var Container
      */
-    private $originalManagers;
+    private $originalEntityManagers;
 
     /**
-     * @var EntityManager[]
+     * @var array<string, EntityManagerInterface>
      */
     private $resetedManagers = [];
 
@@ -46,17 +46,11 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
      */
     private $defaultManagerName;
 
-    /**
-     * @param Container $container
-     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultConnectionName(): string
     {
         $this->loadConnections();
@@ -85,22 +79,25 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @return Connection[]
+     * @return array<string, Connection>
      */
     public function getConnections(): array
     {
         $this->loadConnections();
 
         $connections = [];
+        /** @var string $name */
         foreach ($this->connections->keys() as $name) {
-            $connections[$name] = $this->connections[$name];
+            /** @var Connection $connection */
+            $connection = $this->connections[$name];
+            $connections[$name] = $connection;
         }
 
         return $connections;
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getConnectionNames(): array
     {
@@ -109,9 +106,6 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
         return $this->connections->keys();
     }
 
-    /**
-     * @return string
-     */
     public function getDefaultManagerName(): string
     {
         $this->loadManagers();
@@ -122,7 +116,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     /**
      * @param string|null $name
      *
-     * @return EntityManager|ObjectManager
+     * @return EntityManagerInterface|ObjectManager
      */
     public function getManager($name = null): ObjectManager
     {
@@ -130,7 +124,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
 
         $name = $name ?? $this->getDefaultManagerName();
 
-        if (!isset($this->originalManagers[$name])) {
+        if (!isset($this->originalEntityManagers[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing manager with name "%s".', $name));
         }
 
@@ -138,44 +132,46 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
             return $this->resetedManagers[$name];
         }
 
-        return $this->originalManagers[$name];
+        return $this->originalEntityManagers[$name];
     }
 
     /**
-     * @return EntityManager[]|ObjectManager[]
+     * @return array<string, EntityManagerInterface>|array<string, ObjectManager>
      */
     public function getManagers(): array
     {
         $this->loadManagers();
 
-        $managers = [];
-        foreach ($this->originalManagers->keys() as $name) {
+        $entityManagers = [];
+        /** @var string $name */
+        foreach ($this->originalEntityManagers->keys() as $name) {
+            /* @var EntityManagerInterface $entityManager */
             if (isset($this->resetedManagers[$name])) {
-                $manager = $this->resetedManagers[$name];
+                $entityManager = $this->resetedManagers[$name];
             } else {
-                $manager = $this->originalManagers[$name];
+                $entityManager = $this->originalEntityManagers[$name];
             }
 
-            $managers[$name] = $manager;
+            $entityManagers[$name] = $entityManager;
         }
 
-        return $managers;
+        return $entityManagers;
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getManagerNames(): array
     {
         $this->loadManagers();
 
-        return $this->originalManagers->keys();
+        return $this->originalEntityManagers->keys();
     }
 
     /**
      * @param string|null $name
      *
-     * @return EntityManager|ObjectManager
+     * @return EntityManagerInterface|ObjectManager
      */
     public function resetManager($name = null)
     {
@@ -183,22 +179,26 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
 
         $name = $name ?? $this->getDefaultManagerName();
 
-        if (!isset($this->originalManagers[$name])) {
+        if (!isset($this->originalEntityManagers[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing manager with name "%s".', $name));
         }
 
-        $originalManager = $this->originalManagers[$name];
+        /** @var EntityManagerInterface $originalEntityManager */
+        $originalEntityManager = $this->originalEntityManagers[$name];
 
         /** @var callable $entityManagerFactory */
         $entityManagerFactory = $this->container['doctrine.orm.em.factory'];
 
-        $this->resetedManagers[$name] = $entityManagerFactory(
-            $originalManager->getConnection(),
-            $originalManager->getConfiguration(),
-            $originalManager->getEventManager()
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $entityManagerFactory(
+            $originalEntityManager->getConnection(),
+            $originalEntityManager->getConfiguration(),
+            $originalEntityManager->getEventManager()
         );
 
-        return $this->resetedManagers[$name];
+        $this->resetedManagers[$name] = $entityManager;
+
+        return $entityManager;
     }
 
     /**
@@ -212,8 +212,11 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         foreach ($this->getManagerNames() as $name) {
             try {
-                return $this->getManager($name)->getConfiguration()->getEntityNamespace($alias);
-            } catch (ORMException $e) {
+                /** @var EntityManagerInterface $entityManager */
+                $entityManager = $this->getManager($name);
+
+                return $entityManager->getConfiguration()->getEntityNamespace($alias);
+            } catch (ORMException $exception) {
                 // throw the exception only if no manager can solve it
             }
         }
@@ -221,8 +224,8 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string $persistentObject
-     * @param null   $persistentManagerName
+     * @param string      $persistentObject
+     * @param string|null $persistentManagerName
      *
      * @return EntityRepository|ObjectRepository
      */
@@ -234,24 +237,26 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     /**
      * @param string $class
      *
-     * @return EntityManager|ObjectManager|null
+     * @return EntityManagerInterface|ObjectManager|null
      */
     public function getManagerForClass($class)
     {
         $reflectionClass = new \ReflectionClass($class);
         if ($reflectionClass->implementsInterface(Proxy::class)) {
-            $class = $reflectionClass->getParentClass()->name;
+            /** @var \ReflectionClass $reflectionParentClass */
+            $reflectionParentClass = $reflectionClass->getParentClass();
+            $class = $reflectionParentClass->getName();
         }
 
         foreach ($this->getManagerNames() as $name) {
-            $manager = $this->getManager($name);
-            if (!$manager->getMetadataFactory()->isTransient($class)) {
-                return $manager;
+            $entityManager = $this->getManager($name);
+            if (!$entityManager->getMetadataFactory()->isTransient($class)) {
+                return $entityManager;
             }
         }
     }
 
-    private function loadConnections()
+    private function loadConnections(): void
     {
         if (null === $this->connections) {
             $this->connections = $this->container['doctrine.dbal.dbs'];
@@ -259,10 +264,10 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
         }
     }
 
-    private function loadManagers()
+    private function loadManagers(): void
     {
-        if (null === $this->originalManagers) {
-            $this->originalManagers = $this->container['doctrine.orm.ems'];
+        if (null === $this->originalEntityManagers) {
+            $this->originalEntityManagers = $this->container['doctrine.orm.ems'];
             $this->defaultManagerName = $this->container['doctrine.orm.ems.default'];
         }
     }

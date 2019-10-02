@@ -7,14 +7,14 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\ClassMap\Mapping;
 use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapMappingInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-class ClassMapMapping implements ClassMapMappingInterface
+final class ClassMapMapping implements ClassMapMappingInterface
 {
     /**
      * @param ClassMetadata $metadata
      *
      * @throws MappingException
      */
-    public function configureMapping(ClassMetadata $metadata)
+    public function configureMapping(ClassMetadata $metadata): void
     {
         $metadata->setPrimaryTable(['name' => 'class_map']);
 

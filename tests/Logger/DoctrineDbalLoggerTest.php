@@ -16,11 +16,11 @@ use Psr\Log\LoggerInterface;
  *
  * @internal
  */
-class DoctrineDbalLoggerTest extends TestCase
+final class DoctrineDbalLoggerTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testStartQuery()
+    public function testStartQuery(): void
     {
         /** @var LoggerInterface|MockObject $logger */
         $logger = $this->getMockByCalls(LoggerInterface::class, [
@@ -46,7 +46,7 @@ class DoctrineDbalLoggerTest extends TestCase
         );
     }
 
-    public function testStopQuery()
+    public function testStopQuery(): void
     {
         /** @var LoggerInterface|MockObject $logger */
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMockForAbstractClass();

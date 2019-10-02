@@ -20,11 +20,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
  *
  * @internal
  */
-class DropDatabaseDoctrineCommandTest extends TestCase
+final class DropDatabaseDoctrineCommandTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testExecuteSqliteWithoutName()
+    public function testExecuteSqliteWithoutName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -68,7 +68,7 @@ class DropDatabaseDoctrineCommandTest extends TestCase
         );
     }
 
-    public function testExecuteSqliteWithoutNameAndMissingForce()
+    public function testExecuteSqliteWithoutNameAndMissingForce(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -108,7 +108,7 @@ EOT;
         self::assertSame(str_replace('sample', $dbName, $message), $output->fetch());
     }
 
-    public function testExecuteSqliteWithMissingPath()
+    public function testExecuteSqliteWithMissingPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -136,7 +136,7 @@ EOT;
         $command->run($input, $output);
     }
 
-    public function testExecuteMysqlWithName()
+    public function testExecuteMysqlWithName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -187,7 +187,7 @@ EOT;
         );
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabaseIfExists()
+    public function testExecuteMysqlWithNameAndMissingDatabaseIfExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -233,7 +233,7 @@ EOT;
         );
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabase()
+    public function testExecuteMysqlWithNameAndMissingDatabase(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
