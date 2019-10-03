@@ -28,8 +28,8 @@ before_script:
   - if [ "$dependencies" = "highest" ]; then composer update -n; fi;
 
 script:
-  - vendor/bin/phpunit --coverage-text --verbose
-  - vendor/bin/infection --threads=$(nproc) --min-msi=87 --verbose
+  - phpdbg -qrr vendor/bin/phpunit --coverage-text --verbose
+  - phpdbg -qrr vendor/bin/infection --threads=$(nproc) --min-msi=87 --verbose
   - vendor/bin/phpstan analyse
   - vendor/bin/phploc src --verbose
   - vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation
