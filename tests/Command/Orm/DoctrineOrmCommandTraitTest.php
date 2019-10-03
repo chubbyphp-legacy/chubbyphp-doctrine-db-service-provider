@@ -9,6 +9,7 @@ use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -41,9 +42,12 @@ final class DoctrineOrmCommandTraitTest extends TestCase
             Call::create('getManager')->with('test')->willReturn($entityManager),
         ]);
 
-        $command = new class($managerRegistry) extends BaseCommand {
+        $command = new class($managerRegistry, 'test') extends BaseCommand {
             use DoctrineOrmCommandTrait;
         };
+
+        self::assertSame('test', $command->getName());
+        self::assertSame('some description', $command->getDescription());
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -55,7 +59,7 @@ abstract class BaseCommand extends Command
 {
     protected function configure(): void
     {
-        $this->setName('test');
+        $this->setDescription('some description');
     }
 
     /**
@@ -64,6 +68,8 @@ abstract class BaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        TestCase::assertInstanceOf(EntityManagerHelper::class, $this->getHelperSet()->get('em'));
+
         $output->writeln('success');
 
         return 0;

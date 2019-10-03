@@ -29,7 +29,7 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --verbose
-  - vendor/bin/infection --threads=$(nproc) --min-msi=79 --verbose
+  - vendor/bin/infection --threads=$(nproc) --min-msi=87 --verbose
   - vendor/bin/phpstan analyse
   - vendor/bin/phploc src --verbose
   - vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation

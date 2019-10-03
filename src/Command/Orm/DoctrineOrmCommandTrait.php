@@ -19,9 +19,9 @@ trait DoctrineOrmCommandTrait
      */
     private $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, ?string $name = null)
     {
-        parent::__construct();
+        parent::__construct($name);
 
         $this->managerRegistry = $managerRegistry;
     }

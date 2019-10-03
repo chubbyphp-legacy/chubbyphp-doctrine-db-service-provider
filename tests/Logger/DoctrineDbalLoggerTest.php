@@ -28,9 +28,11 @@ final class DoctrineDbalLoggerTest extends TestCase
                 ->with(
                     'select * from users where username = :username',
                     [
-                        'username' => 'john.doe+66666666666666666 [...]',
-                        'picture' => '(binary value)',
                         'active' => true,
+                        'picture' => '(binary value)',
+                        'username' => 'jöhn.doé+66666666666666@gm [...]',
+                        'alias' => 'jöhn.doé+6666666666666@gmail.com',
+                        'document' => '(binary value)',
                     ]
                 ),
         ]);
@@ -39,9 +41,11 @@ final class DoctrineDbalLoggerTest extends TestCase
         $dbalLogger->startQuery(
             'select * from users where username = :username',
             [
-                'username' => 'john.doe+6666666666666666666@gmail.com',
-                'picture' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='),
                 'active' => true,
+                'picture' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='),
+                'username' => 'jöhn.doé+66666666666666@gmail.com',
+                'alias' => 'jöhn.doé+6666666666666@gmail.com',
+                'document' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='),
             ]
         );
     }
@@ -49,8 +53,7 @@ final class DoctrineDbalLoggerTest extends TestCase
     public function testStopQuery(): void
     {
         /** @var LoggerInterface|MockObject $logger */
-        $logger = $this->getMockBuilder(LoggerInterface::class)->getMockForAbstractClass();
-        $logger->expects(self::never())->method(self::anything());
+        $logger = $this->getMockByCalls(LoggerInterface::class);
 
         $dbalLogger = new DoctrineDbalLogger($logger);
         $dbalLogger->stopQuery();
