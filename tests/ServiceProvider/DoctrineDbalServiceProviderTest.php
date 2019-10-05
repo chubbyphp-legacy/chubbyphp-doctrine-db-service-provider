@@ -100,6 +100,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
                 'auto_commit' => true,
                 'cache.result' => ['type' => 'array'],
                 'filter_schema_assets_expression' => null,
+                'schema_assets_filter' => null,
             ],
             'connection' => [
                 'charset' => 'utf8mb4',
@@ -208,7 +209,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
                 'configuration' => [
                     'auto_commit' => false,
                     'cache.result' => ['type' => 'apcu'],
-                    'filter_schema_assets_expression' => 'expression',
+                    'filter_schema_assets_expression' => '/^.*$/',
                 ],
                 'connection' => [
                     'dbname' => 'my_database',
@@ -219,7 +220,8 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             ],
             'mysql_write' => [
                 'configuration' => [
-                    'cache.result' => ['type' => 'apcu'],
+                    'cache.result' => ['type' => 'array'],
+                    'schema_assets_filter' => function (string $assetName) { return preg_match('/^.*$/', $assetName); },
                 ],
                 'connection' => [
                     'dbname' => 'my_database',
@@ -248,13 +250,17 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             'user' => 'my_username',
         ], $dbRead->getParams());
 
-        /** @var Configuration $configuration */
-        $configuration = $container['doctrine.dbal.dbs.config']['mysql_read'];
+        /** @var Configuration $configurationReadDb */
+        $configurationReadDb = $container['doctrine.dbal.dbs.config']['mysql_read'];
 
-        self::assertInstanceOf(DoctrineDbalLogger::class, $configuration->getSQLLogger());
-        self::assertInstanceOf(ApcuCache::class, $configuration->getResultCacheImpl());
-        self::assertSame('expression', $configuration->getFilterSchemaAssetsExpression());
-        self::assertFalse($configuration->getAutoCommit());
+        $schemaAssetFilterReadDb = $configurationReadDb->getSchemaAssetsFilter();
+
+        self::assertInstanceOf(DoctrineDbalLogger::class, $configurationReadDb->getSQLLogger());
+        self::assertInstanceOf(ApcuCache::class, $configurationReadDb->getResultCacheImpl());
+        self::assertSame('/^.*$/', $configurationReadDb->getFilterSchemaAssetsExpression());
+        self::assertIsCallable($schemaAssetFilterReadDb);
+        self::assertSame(1, $schemaAssetFilterReadDb('assetName'));
+        self::assertFalse($configurationReadDb->getAutoCommit());
 
         /** @var Connection $dbWrite */
         $dbWrite = $container['doctrine.dbal.dbs']['mysql_write'];
@@ -269,5 +275,17 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             'port' => 3306,
             'user' => 'my_username',
         ], $dbWrite->getParams());
+
+        /** @var Configuration $configurationWriteDb */
+        $configurationWriteDb = $container['doctrine.dbal.dbs.config']['mysql_write'];
+
+        $schemaAssetFilterWriteDb = $configurationWriteDb->getSchemaAssetsFilter();
+
+        self::assertInstanceOf(DoctrineDbalLogger::class, $configurationWriteDb->getSQLLogger());
+        self::assertInstanceOf(ArrayCache::class, $configurationWriteDb->getResultCacheImpl());
+        self::assertNull($configurationWriteDb->getFilterSchemaAssetsExpression());
+        self::assertIsCallable($schemaAssetFilterWriteDb);
+        self::assertSame(1, $schemaAssetFilterWriteDb('assetName'));
+        self::assertTrue($configurationWriteDb->getAutoCommit());
     }
 }

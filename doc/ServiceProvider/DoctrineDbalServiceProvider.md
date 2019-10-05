@@ -15,6 +15,8 @@ The *DoctrineDbalServiceProvider* provides integration with the [Doctrine Dbal][
             Can be any of: `apcu`, `array`. Add additional cache provider factories by adding new service:
             `$container['doctrine.dbal.db.cache_factory.<type>']`
         * **filter_schema_assets_expression**: An expression to filter for schema (tables)
+            `deprecated, use schema_assets_filter instead`
+        * **schema_assets_filter**: An filter callable for schema (tables)
 
     * **connection**:
 

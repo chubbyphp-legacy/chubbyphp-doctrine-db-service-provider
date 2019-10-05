@@ -86,7 +86,8 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
             'configuration' => [
                 'auto_commit' => true,
                 'cache.result' => ['type' => 'array'],
-                'filter_schema_assets_expression' => null,
+                'filter_schema_assets_expression' => null, // @deprecated
+                'schema_assets_filter' => null,
             ],
             'connection' => [
                 'charset' => 'utf8mb4',
@@ -154,7 +155,15 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
                     $config->setResultCacheImpl($this->getCache($container, $configOptions['cache.result']));
 
-                    $config->setFilterSchemaAssetsExpression($configOptions['filter_schema_assets_expression']);
+                    if (null !== $configOptions['filter_schema_assets_expression']) {
+                        // @deprecated
+                        $config->setFilterSchemaAssetsExpression($configOptions['filter_schema_assets_expression']);
+                    }
+
+                    if (null !== $configOptions['schema_assets_filter']) {
+                        $config->setSchemaAssetsFilter($configOptions['schema_assets_filter']);
+                    }
+
                     $config->setAutoCommit($configOptions['auto_commit']);
 
                     return $config;

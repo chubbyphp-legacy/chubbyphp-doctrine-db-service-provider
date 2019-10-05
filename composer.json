@@ -12,15 +12,15 @@
     "require": {
         "php": "^7.2",
         "doctrine/cache": "^1.6",
-        "doctrine/common": "^2.5",
-        "doctrine/dbal": "^2.5"
+        "doctrine/common": "^2.9",
+        "doctrine/dbal": "^2.9"
     },
     "conflict": {
-        "doctrine/orm": "<2.5,>=3.0"
+        "doctrine/orm": "<2.6.3,>=3.0"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-mock": "^1.4",
-        "doctrine/orm": "^2.6.4",
+        "doctrine/orm": "^2.6.3",
         "friendsofphp/php-cs-fixer": "^2.15.3",
         "infection/infection": "^0.14.1",
         "nunomaduro/phpinsights": "^1.9",
