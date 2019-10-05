@@ -12,6 +12,9 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Schema;
 
+/**
+ *@deprecated use https://github.com/chubbyphp/chubbyphp-mock instead
+ */
 trait DoctrineDbalConnectionTrait
 {
     /**

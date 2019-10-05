@@ -10,12 +10,15 @@ use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\Mapping\EntityListenerResolver;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Repository\RepositoryFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Pimple\Container;
@@ -343,12 +346,25 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
+        /** @var RepositoryFactory|MockObject $repositoryFactory */
+        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+
+        /** @var EntityListenerResolver|MockObject $entityListenerResolver */
+        $entityListenerResolver = $this->getMockByCalls(EntityListenerResolver::class);
+
         /** @var Configuration|MockObject $configuration */
-        $configuration = $this->getMockBuilder(Configuration::class)->disableOriginalConstructor()->getMock();
-        $configuration->expects(self::once())->method('getMetadataDriverImpl')->willReturn($mappingDriver);
-        $configuration->expects(self::once())->method('getClassMetadataFactoryName')->willReturn(ClassMetadataFactory::class);
-        $configuration->expects(self::once())->method('getProxyDir')->willReturn(sys_get_temp_dir());
-        $configuration->expects(self::once())->method('getProxyNamespace')->willReturn('DoctrineProxy');
+        $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
+            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
+            Call::create('getMetadataCacheImpl')->with()->willReturn(null),
+            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
+            Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
+            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+            Call::create('getProxyDir')->with()->willReturn(sys_get_temp_dir()),
+            Call::create('getProxyNamespace')->with()->willReturn('DoctrineProxy'),
+            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+        ]);
 
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class, [
@@ -391,12 +407,25 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
+        /** @var RepositoryFactory|MockObject $repositoryFactory */
+        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+
+        /** @var EntityListenerResolver|MockObject $entityListenerResolver */
+        $entityListenerResolver = $this->getMockByCalls(EntityListenerResolver::class);
+
         /** @var Configuration|MockObject $configuration */
-        $configuration = $this->getMockBuilder(Configuration::class)->disableOriginalConstructor()->getMock();
-        $configuration->expects(self::once())->method('getMetadataDriverImpl')->willReturn($mappingDriver);
-        $configuration->expects(self::once())->method('getClassMetadataFactoryName')->willReturn(ClassMetadataFactory::class);
-        $configuration->expects(self::once())->method('getProxyDir')->willReturn(sys_get_temp_dir());
-        $configuration->expects(self::once())->method('getProxyNamespace')->willReturn('DoctrineProxy');
+        $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
+            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
+            Call::create('getMetadataCacheImpl')->with()->willReturn(null),
+            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
+            Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
+            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+            Call::create('getProxyDir')->with()->willReturn(sys_get_temp_dir()),
+            Call::create('getProxyNamespace')->with()->willReturn('DoctrineProxy'),
+            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+        ]);
 
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class, [
