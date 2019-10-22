@@ -1,9 +1,0 @@
-Chubbyphp\Tests\DoctrineDbServiceProvider\Resources\Yaml\Entity\Yaml:
-  type: entity
-  table: yaml
-  id:
-    id:
-      type: string
-  fields:
-    name:
-      type: string

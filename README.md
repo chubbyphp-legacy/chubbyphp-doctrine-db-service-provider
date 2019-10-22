@@ -1,8 +1,7 @@
 # chubbyphp-doctrine-db-service-provider
 
 [![Build Status](https://api.travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider.png?branch=master)](https://travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/chubbyphp/chubbyphp-doctrine-db-service-provider/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/chubbyphp/chubbyphp-doctrine-db-service-provider/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/chubbyphp/chubbyphp-doctrine-db-service-provider/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/chubbyphp/chubbyphp-doctrine-db-service-provider/?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-doctrine-db-service-provider/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-doctrine-db-service-provider?branch=master)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
