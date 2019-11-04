@@ -10,8 +10,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 final class ClassMapMapping implements ClassMapMappingInterface
 {
     /**
-     * @param ClassMetadata $metadata
-     *
      * @throws MappingException
      */
     public function configureMapping(ClassMetadata $metadata): void

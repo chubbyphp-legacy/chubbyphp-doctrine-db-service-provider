@@ -123,8 +123,6 @@ EOT
 
     /**
      * @param array<string, string> $params
-     *
-     * @return string
      */
     private function getDbName(array $params): string
     {

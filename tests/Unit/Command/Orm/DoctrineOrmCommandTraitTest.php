@@ -62,10 +62,6 @@ abstract class BaseCommand extends Command
         $this->setDescription('some description');
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         TestCase::assertInstanceOf(EntityManagerHelper::class, $this->getHelperSet()->get('em'));

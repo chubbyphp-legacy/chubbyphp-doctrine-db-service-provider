@@ -17,11 +17,6 @@ use Doctrine\DBAL\Schema\Schema;
  */
 trait DoctrineDbalConnectionTrait
 {
-    /**
-     * @param array $stacks
-     *
-     * @return Connection
-     */
     private function getConnection(array $stacks = []): Connection
     {
         /* @var Connection|\PHPUnit_Framework_MockObject_MockObject $connection */
@@ -284,11 +279,6 @@ trait DoctrineDbalConnectionTrait
         return $connection;
     }
 
-    /**
-     * @param array $executeStack
-     *
-     * @return QueryBuilder
-     */
     private function getQueryBuilder(array $executeStack = []): QueryBuilder
     {
         $modifiers = [
@@ -381,9 +371,6 @@ trait DoctrineDbalConnectionTrait
         return $queryBuilder;
     }
 
-    /**
-     * @return ExpressionBuilder
-     */
     private function getExpressionBuilder(): ExpressionBuilder
     {
         $comparsions = [
@@ -427,10 +414,7 @@ trait DoctrineDbalConnectionTrait
     }
 
     /**
-     * @param int   $checkType
      * @param mixed $data
-     *
-     * @return Statement
      */
     private function getStatement(int $checkType, $data): Statement
     {
@@ -464,11 +448,6 @@ trait DoctrineDbalConnectionTrait
         return $stmt;
     }
 
-    /**
-     * @param array $stacks
-     *
-     * @return AbstractSchemaManager
-     */
     private function getSchemaManager(array $stacks = []): AbstractSchemaManager
     {
         /** @var AbstractSchemaManager|\PHPUnit_Framework_MockObject_MockObject $schemaManager */
@@ -542,8 +521,6 @@ trait DoctrineDbalConnectionTrait
 
     /**
      * @param $stacks
-     *
-     * @return Schema
      */
     private function getSchema(array $stacks): Schema
     {
@@ -584,9 +561,6 @@ trait DoctrineDbalConnectionTrait
         return $schema;
     }
 
-    /**
-     * @return AbstractPlatform
-     */
     private function getPlatform(): AbstractPlatform
     {
         /** @var AbstractPlatform|\PHPUnit_Framework_MockObject_MockObject $platform */

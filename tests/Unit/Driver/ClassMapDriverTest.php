@@ -128,8 +128,6 @@ final class ClassMapDriverTest extends TestCase
     {
         return new class() implements ClassMapMappingInterface {
             /**
-             * @param ClassMetadata $metadata
-             *
              * @throws MappingException
              */
             public function configureMapping(ClassMetadata $metadata): void

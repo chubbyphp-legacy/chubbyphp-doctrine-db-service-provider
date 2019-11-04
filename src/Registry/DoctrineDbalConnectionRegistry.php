@@ -41,8 +41,6 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
      * @param string|null $name
      *
      * @throws \InvalidArgumentException
-     *
-     * @return Connection
      */
     public function getConnection($name = null): Connection
     {

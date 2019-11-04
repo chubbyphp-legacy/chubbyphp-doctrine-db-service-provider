@@ -25,8 +25,7 @@ class ClassMapDriver implements MappingDriver
     }
 
     /**
-     * @param string                 $className
-     * @param ClassMetadataInterface $metadata
+     * @param string $className
      *
      * @throws MappingException
      */
@@ -65,8 +64,6 @@ class ClassMapDriver implements MappingDriver
 
     /**
      * @param string $className
-     *
-     * @return bool
      */
     public function isTransient($className): bool
     {

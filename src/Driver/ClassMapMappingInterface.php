@@ -10,8 +10,6 @@ use Doctrine\ORM\Mapping\MappingException;
 interface ClassMapMappingInterface
 {
     /**
-     * @param ClassMetadata $metadata
-     *
      * @throws MappingException
      */
     public function configureMapping(ClassMetadata $metadata);

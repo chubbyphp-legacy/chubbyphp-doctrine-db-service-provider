@@ -19,8 +19,6 @@ final class StaticPhp
     private $name;
 
     /**
-     * @param ClassMetadata $metadata
-     *
      * @throws \Doctrine\ORM\Mapping\MappingException
      */
     public static function loadMetadata(ClassMetadata $metadata): void

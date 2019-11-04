@@ -62,8 +62,6 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
      * @param string|null $name
      *
      * @throws \InvalidArgumentException
-     *
-     * @return Connection
      */
     public function getConnection($name = null): Connection
     {
@@ -205,8 +203,6 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
      * @param string $alias
      *
      * @throws ORMException
-     *
-     * @return string
      */
     public function getAliasNamespace($alias): string
     {
