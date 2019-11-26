@@ -127,6 +127,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         self::assertInstanceOf(Container::class, $container['doctrine.dbal.dbs']);
         self::assertInstanceOf(Container::class, $container['doctrine.dbal.dbs.config']);
         self::assertInstanceOf(Container::class, $container['doctrine.dbal.dbs.event_manager']);
+        self::assertSame(['default'], $container['doctrine.dbal.dbs.name']);
         self::assertInstanceOf(\Closure::class, $container['doctrine.dbal.dbs.options.initializer']);
         self::assertSame([], $container['doctrine.dbal.types']);
     }
@@ -144,7 +145,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
 
         $container['doctrine.dbal.types'] = [
             Type::STRING => IntegerType::class,
-            'anotherType' => StringType::class,
+            'anotherType'.uniqid() => StringType::class,
         ];
 
         $container['doctrine.dbal.db.cache_factory.filesystem'] = $container->protect(
@@ -231,6 +232,8 @@ final class DoctrineDbalServiceProviderTest extends TestCase
                 ],
             ],
         ];
+
+        self::assertSame(['mysql_read', 'mysql_write'], $container['doctrine.dbal.dbs.name']);
 
         self::assertFalse($container['doctrine.dbal.dbs']->offsetExists('default'));
         self::assertTrue($container['doctrine.dbal.dbs']->offsetExists('mysql_read'));

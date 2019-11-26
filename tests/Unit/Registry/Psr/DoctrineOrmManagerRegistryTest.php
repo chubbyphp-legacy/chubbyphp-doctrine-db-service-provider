@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Registry;
+namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Registry\Psr;
 
-use Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry;
+use Chubbyphp\DoctrineDbServiceProvider\Registry\Psr\DoctrineOrmManagerRegistry;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\EventManager;
@@ -21,10 +21,10 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Repository\RepositoryFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Pimple\Container;
+use Psr\Container\ContainerInterface;
 
 /**
- * @covers \Chubbyphp\DoctrineDbServiceProvider\Registry\DoctrineOrmManagerRegistry
+ * @covers \Chubbyphp\DoctrineDbServiceProvider\Registry\Psr\DoctrineOrmManagerRegistry
  *
  * @internal
  */
@@ -34,11 +34,11 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
 
     public function testGetDefaultConnectionName(): void
     {
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn($this->getMockByCalls(Container::class)),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn($this->getMockByCalls(ContainerInterface::class)),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -51,16 +51,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($connection),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($connection),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -73,16 +73,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('somename')->willReturn(true),
-                    Call::create('offsetGet')->with('somename')->willReturn($connection),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('somename')->willReturn(true),
+                    Call::create('get')->with('somename')->willReturn($connection),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -95,15 +95,15 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing connection with name "default".');
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(false),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(false),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn([]),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn([]),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -118,16 +118,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var Connection|MockObject $connection2 */
         $connection2 = $this->getMockByCalls(Connection::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetGet')->with('default')->willReturn($connection1),
-                    Call::create('offsetGet')->with('somename')->willReturn($connection2),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('get')->with('default')->willReturn($connection1),
+                    Call::create('get')->with('somename')->willReturn($connection2),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -144,13 +144,13 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
 
     public function testGetConnectionNames(): void
     {
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class)
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class)
             ),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -160,11 +160,11 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
 
     public function testGetDefaultManagerName(): void
     {
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn($this->getMockByCalls(Container::class)),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn($this->getMockByCalls(ContainerInterface::class)),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -177,16 +177,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -199,16 +199,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('somename')->willReturn(true),
-                    Call::create('offsetGet')->with('somename')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('somename')->willReturn(true),
+                    Call::create('get')->with('somename')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -221,15 +221,15 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -246,15 +246,15 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing manager with name "default".');
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(false),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(false),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn([]),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn([]),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -269,16 +269,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var EntityManager|MockObject $manager2 */
         $manager2 = $this->getMockByCalls(EntityManager::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetGet')->with('default')->willReturn($manager1),
-                    Call::create('offsetGet')->with('somename')->willReturn($manager2),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('get')->with('default')->willReturn($manager1),
+                    Call::create('get')->with('somename')->willReturn($manager2),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -298,13 +298,13 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         /** @var EntityManager|MockObject $manager */
         $manager = $this->getMockByCalls(EntityManager::class);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class)
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class)
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -324,13 +324,13 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
 
     public function testGetManagerNames(): void
     {
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class)
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class)
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -379,17 +379,17 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
-            Call::create('offsetGet')->with('doctrine.orm.em.factory')->willReturn(
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.em.factory')->willReturn(
                 function (Connection $connection, Configuration $config, EventManager $eventManager) {
                     return EntityManager::create($connection, $config, $eventManager);
                 }
@@ -441,17 +441,17 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('somename')->willReturn(true),
-                    Call::create('offsetGet')->with('somename')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('somename')->willReturn(true),
+                    Call::create('get')->with('somename')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
-            Call::create('offsetGet')->with('doctrine.orm.em.factory')->willReturn(
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.em.factory')->willReturn(
                 function (Connection $connection, Configuration $config, EventManager $eventManager) {
                     return EntityManager::create($connection, $config, $eventManager);
                 }
@@ -467,15 +467,15 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing manager with name "default".');
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(false),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(false),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn([]),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn([]),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -494,16 +494,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getConfiguration')->with()->willReturn($configuration),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -521,16 +521,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getConfiguration')->with()->willThrowException(new ORMException('')),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -548,16 +548,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getRepository')->with(\stdClass::class)->willReturn($repository),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -577,16 +577,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getMetadataFactory')->with()->willReturn($classMetadataFactory),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
@@ -606,16 +606,16 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getMetadataFactory')->with()->willReturn($classMetadataFactory),
         ]);
 
-        /** @var Container|MockObject $container */
-        $container = $this->getMockByCalls(Container::class, [
-            Call::create('offsetGet')->with('doctrine.orm.ems')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('offsetExists')->with('default')->willReturn(true),
-                    Call::create('offsetGet')->with('default')->willReturn($manager),
+        /** @var ContainerInterface|MockObject $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('doctrine.orm.ems')->willReturn(
+                $this->getMockByCalls(ContainerInterface::class, [
+                    Call::create('has')->with('default')->willReturn(true),
+                    Call::create('get')->with('default')->willReturn($manager),
                 ])
             ),
-            Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
-            Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
+            Call::create('get')->with('doctrine.orm.ems.name')->willReturn(['default']),
+            Call::create('get')->with('doctrine.orm.ems.default')->willReturn('default'),
         ]);
 
         $registry = new DoctrineOrmManagerRegistry($container);
