@@ -26,6 +26,7 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
             Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn($this->getMockByCalls(Container::class)),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
@@ -47,6 +48,7 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
                     Call::create('offsetGet')->with('default')->willReturn($connection),
                 ])
             ),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
@@ -68,6 +70,7 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
                     Call::create('offsetGet')->with('somename')->willReturn($connection),
                 ])
             ),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
@@ -88,6 +91,7 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
                     Call::create('offsetExists')->with('default')->willReturn(false),
                 ])
             ),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn([]),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
@@ -107,11 +111,11 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
         $container = $this->getMockByCalls(Container::class, [
             Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
                 $this->getMockByCalls(Container::class, [
-                    Call::create('keys')->with()->willReturn(['default', 'somename']),
                     Call::create('offsetGet')->with('default')->willReturn($connection1),
                     Call::create('offsetGet')->with('somename')->willReturn($connection2),
                 ])
             ),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default', 'somename']),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 
@@ -132,10 +136,9 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
         /** @var Container|MockObject $container */
         $container = $this->getMockByCalls(Container::class, [
             Call::create('offsetGet')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class, [
-                    Call::create('keys')->with()->willReturn(['default']),
-                ])
+                $this->getMockByCalls(Container::class)
             ),
+            Call::create('offsetGet')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
             Call::create('offsetGet')->with('doctrine.dbal.dbs.default')->willReturn('default'),
         ]);
 

@@ -26,21 +26,31 @@ Doctrine database service providers for doctrine dbal and orm.
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-doctrine-db-service-provider][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^1.4"
+composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^1.5"
 ```
 
-## Providers
+## Usage
 
- * [DoctrineDbalServiceProvider][2]
- * [DoctrineOrmServiceProvider][3]
+### ServiceFactory (chubbyphp/chubbyphp-container)
+
+ * [DoctrineDbalServiceFactory][2]
+ * [DoctrineOrmServiceFactory][3]
+
+### ServiceProvider (pimple/pimple)
+
+ * [DoctrineDbalServiceProvider][4]
+ * [DoctrineOrmServiceProvider][5]
 
 ## Copyright
 
-Dominik Zogg 2018
+Dominik Zogg 2019
 
-There is some code with @see, copied with small modifications by from thirdparties.
+*There is some code with @see, copied with small modifications by from thirdparties.*
 
 [1]: https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider
 
-[2]: doc/ServiceProvider/DoctrineDbalServiceProvider.md
-[3]: doc/ServiceProvider/DoctrineOrmServiceProvider.md
+[2]: doc/ServiceFactory/DoctrineDbalServiceFactory.md
+[3]: doc/ServiceFactory/DoctrineOrmServiceFactory.md
+
+[4]: doc/ServiceProvider/DoctrineDbalServiceProvider.md
+[5]: doc/ServiceProvider/DoctrineOrmServiceProvider.md

@@ -34,8 +34,9 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         $container['doctrine.dbal.dbs'] = $this->getDbsDefinition($container);
         $container['doctrine.dbal.dbs.config'] = $this->getDbsConfigDefinition($container);
         $container['doctrine.dbal.dbs.event_manager'] = $this->getDbsEventManagerDefinition($container);
+        $container['doctrine.dbal.dbs.name'] = $this->getDbsNameDefinition($container);
         $container['doctrine.dbal.dbs.options.initializer'] = $this->getDbsOptionsInitializerDefinition($container);
-        $container['doctrine.dbal.types'] = [];
+        $container['doctrine.dbal.types'] = $this->getTypesDefinition();
     }
 
     private function getDbConnectionRegistryDefintion(Container $container): callable
@@ -200,6 +201,15 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         };
     }
 
+    private function getDbsNameDefinition(Container $container): callable
+    {
+        return static function () use ($container) {
+            $container['doctrine.dbal.dbs.options.initializer']();
+
+            return array_keys($container['doctrine.dbal.dbs.options']);
+        };
+    }
+
     private function getDbsOptionsInitializerDefinition(Container $container): callable
     {
         return $container->protect(static function () use ($container): void {
@@ -211,7 +221,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
             $initialized = true;
 
-            foreach ((array) $container['doctrine.dbal.types'] as $typeName => $typeClass) {
+            foreach ($container['doctrine.dbal.types'] as $typeName => $typeClass) {
                 if (Type::hasType($typeName)) {
                     Type::overrideType($typeName, $typeClass);
                 } else {
@@ -236,5 +246,10 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
             $container['doctrine.dbal.dbs.options'] = $tmp;
         });
+    }
+
+    private function getTypesDefinition(): array
+    {
+        return [];
     }
 }

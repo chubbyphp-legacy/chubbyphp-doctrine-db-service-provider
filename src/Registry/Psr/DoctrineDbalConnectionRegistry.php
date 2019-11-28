@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Chubbyphp\DoctrineDbServiceProvider\Registry;
+namespace Chubbyphp\DoctrineDbServiceProvider\Registry\Psr;
 
 use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
-use Pimple\Container;
+use Psr\Container\ContainerInterface;
 
 final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
 {
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     private $container;
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     private $connections;
 
@@ -30,7 +30,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
      */
     private $defaultConnectionName;
 
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
@@ -53,11 +53,11 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
 
         $name = $name ?? $this->getDefaultConnectionName();
 
-        if (!isset($this->connections[$name])) {
+        if (!$this->connections->has($name)) {
             throw new \InvalidArgumentException(sprintf('Missing connection with name "%s".', $name));
         }
 
-        return $this->connections[$name];
+        return $this->connections->get($name);
     }
 
     /**
@@ -71,7 +71,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
         /** @var string $name */
         foreach ($this->connectionNames as $name) {
             /** @var Connection $connection */
-            $connection = $this->connections[$name];
+            $connection = $this->connections->get($name);
             $connections[$name] = $connection;
         }
 
@@ -91,9 +91,9 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     private function loadConnections(): void
     {
         if (null === $this->connections) {
-            $this->connections = $this->container['doctrine.dbal.dbs'];
-            $this->connectionNames = $this->container['doctrine.dbal.dbs.name'];
-            $this->defaultConnectionName = $this->container['doctrine.dbal.dbs.default'];
+            $this->connections = $this->container->get('doctrine.dbal.dbs');
+            $this->connectionNames = $this->container->get('doctrine.dbal.dbs.name');
+            $this->defaultConnectionName = $this->container->get('doctrine.dbal.dbs.default');
         }
     }
 }

@@ -43,7 +43,8 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         $container['doctrine.orm.em.default_options'] = $this->getOrmEmDefaultOptions();
         $container['doctrine.orm.em.factory'] = $this->getOrmEmFactory($container);
         $container['doctrine.orm.ems'] = $this->getOrmEmsDefinition($container);
-        $container['doctrine.orm.ems.config'] = $this->getOrmEmsConfigServiceProvider($container);
+        $container['doctrine.orm.ems.config'] = $this->getOrmEmsConfigDefinition($container);
+        $container['doctrine.orm.ems.name'] = $this->getOrmEmsNameDefinition($container);
         $container['doctrine.orm.ems.options.initializer'] = $this->getOrmEmsOptionsInitializerDefinition($container);
         $container['doctrine.orm.entity.listener_resolver.default'] = $this->getOrmEntityListenerResolverDefinition();
         $container['doctrine.orm.manager_registry'] = $this->getOrmManagerRegistryDefintion($container);
@@ -149,65 +150,67 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         };
     }
 
-    private function getOrmEmsConfigServiceProvider(Container $container): callable
+    private function getOrmEmsConfigDefinition(Container $container): callable
     {
         return function () use ($container) {
             $container['doctrine.orm.ems.options.initializer']();
 
             $configs = new Container();
             foreach ($container['doctrine.orm.ems.options'] as $name => $options) {
-                $connectionName = $options['connection'];
+                $configs[$name] = function () use ($container, $options) {
+                    $connectionName = $options['connection'];
 
-                $config = new Configuration();
+                    $config = new Configuration();
 
-                $config->setSQLLogger($container['doctrine.dbal.dbs.config'][$connectionName]->getSQLLogger());
+                    $config->setSQLLogger($container['doctrine.dbal.dbs.config'][$connectionName]->getSQLLogger());
 
-                $config->setQueryCacheImpl($this->getCache($container, $options['cache.query']));
-                $config->setHydrationCacheImpl($this->getCache($container, $options['cache.hydration']));
-                $config->setMetadataCacheImpl($this->getCache($container, $options['cache.metadata']));
+                    $config->setQueryCacheImpl($this->getCache($container, $options['cache.query']));
+                    $config->setHydrationCacheImpl($this->getCache($container, $options['cache.hydration']));
+                    $config->setMetadataCacheImpl($this->getCache($container, $options['cache.metadata']));
 
-                $config->setResultCacheImpl(
-                    $container['doctrine.dbal.dbs.config'][$connectionName]->getResultCacheImpl()
-                );
+                    $config->setResultCacheImpl(
+                        $container['doctrine.dbal.dbs.config'][$connectionName]->getResultCacheImpl()
+                    );
 
-                $config->setClassMetadataFactoryName($options['class_metadata.factory.name']);
+                    $config->setClassMetadataFactoryName($options['class_metadata.factory.name']);
 
-                $config->setCustomDatetimeFunctions($options['custom.functions.datetime']);
-                $config->setCustomHydrationModes($options['custom.hydration_modes']);
-                $config->setCustomNumericFunctions($options['custom.functions.numeric']);
-                $config->setCustomStringFunctions($options['custom.functions.string']);
+                    $config->setCustomDatetimeFunctions($options['custom.functions.datetime']);
+                    $config->setCustomHydrationModes($options['custom.hydration_modes']);
+                    $config->setCustomNumericFunctions($options['custom.functions.numeric']);
+                    $config->setCustomStringFunctions($options['custom.functions.string']);
 
-                $config->setEntityListenerResolver(
-                    $container[
-                        sprintf('doctrine.orm.entity.listener_resolver.%s', $options['entity.listener_resolver'])
-                    ]
-                );
+                    $config->setEntityListenerResolver(
+                        $container[
+                            sprintf('doctrine.orm.entity.listener_resolver.%s', $options['entity.listener_resolver'])
+                        ]
+                    );
 
-                $config->setMetadataDriverImpl(
-                    $container['doctrine.orm.mapping_driver_chain']($config, $options['mappings'])
-                );
+                    $config->setMetadataDriverImpl(
+                        $container['doctrine.orm.mapping_driver_chain']($config, $options['mappings'])
+                    );
 
-                $config->setAutoGenerateProxyClasses($options['proxies.auto_generate']);
-                $config->setProxyDir($options['proxies.dir']);
-                $config->setProxyNamespace($options['proxies.namespace']);
+                    $config->setAutoGenerateProxyClasses($options['proxies.auto_generate']);
+                    $config->setProxyDir($options['proxies.dir']);
+                    $config->setProxyNamespace($options['proxies.namespace']);
 
-                $config->setDefaultQueryHints($options['query_hints']);
+                    $config->setDefaultQueryHints($options['query_hints']);
 
-                $config->setRepositoryFactory(
-                    $container[sprintf('doctrine.orm.repository.factory.%s', $options['repository.factory'])]
-                );
-                $config->setDefaultRepositoryClassName($options['repository.default.class']);
+                    $config->setRepositoryFactory(
+                        $container[sprintf('doctrine.orm.repository.factory.%s', $options['repository.factory'])]
+                    );
+                    $config->setDefaultRepositoryClassName($options['repository.default.class']);
 
-                $this->assignSecondLevelCache($container, $config, $options);
+                    $this->assignSecondLevelCache($container, $config, $options);
 
-                $config->setNamingStrategy(
-                    $container[sprintf('doctrine.orm.strategy.naming.%s', $options['strategy.naming'])]
-                );
-                $config->setQuoteStrategy(
-                    $container[sprintf('doctrine.orm.strategy.quote.%s', $options['strategy.quote'])]
-                );
+                    $config->setNamingStrategy(
+                        $container[sprintf('doctrine.orm.strategy.naming.%s', $options['strategy.naming'])]
+                    );
+                    $config->setQuoteStrategy(
+                        $container[sprintf('doctrine.orm.strategy.quote.%s', $options['strategy.quote'])]
+                    );
 
-                $configs[$name] = $config;
+                    return $config;
+                };
             }
 
             return $configs;
@@ -244,6 +247,15 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 
         $config->setSecondLevelCacheEnabled(true);
         $config->setSecondLevelCacheConfiguration($cacheConfiguration);
+    }
+
+    private function getOrmEmsNameDefinition(Container $container): callable
+    {
+        return static function () use ($container) {
+            $container['doctrine.orm.ems.options.initializer']();
+
+            return array_keys($container['doctrine.orm.ems.options']);
+        };
     }
 
     private function getOrmEmsOptionsInitializerDefinition(Container $container): callable
@@ -293,7 +305,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
     private function getOrmMappingDriverFactoryAnnotation(Container $container): callable
     {
         return $container->protect(static function (array $mapping, Configuration $config) {
-            return $config->newDefaultAnnotationDriver((array) $mapping['path'], false);
+            return $config->newDefaultAnnotationDriver($mapping['path'], false);
         });
     }
 
