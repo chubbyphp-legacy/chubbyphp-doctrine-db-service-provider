@@ -100,6 +100,10 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
                 'port' => 3306,
                 'user' => 'root',
             ],
+            'eventManager' => [
+                'listener' => [],
+                'subscriber' => [],
+            ],
         ];
     }
 
@@ -191,9 +195,24 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
             $container['doctrine.dbal.dbs.options.initializer']();
 
             $managers = new Container();
-            foreach (array_keys($container['doctrine.dbal.dbs.options']) as $name) {
-                $managers[$name] = static function () {
-                    return new EventManager();
+            foreach ($container['doctrine.dbal.dbs.options'] as $name => $options) {
+                $managers[$name] = static function () use ($container, $options) {
+                    $eventManagerOptions = $options['eventManager'];
+
+                    $eventManager = new EventManager();
+
+                    foreach ($eventManagerOptions['listener'] as $listenerConfig) {
+                        $eventManager->addEventListener(
+                            $listenerConfig['events'],
+                            $container[$listenerConfig['listener']]
+                        );
+                    }
+
+                    foreach ($eventManagerOptions['subscriber'] as $subscriber) {
+                        $eventManager->addEventSubscriber($container[$subscriber]);
+                    }
+
+                    return $eventManager;
                 };
             }
 

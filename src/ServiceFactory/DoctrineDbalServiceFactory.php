@@ -102,6 +102,10 @@ final class DoctrineDbalServiceFactory
                     'port' => 3306,
                     'user' => 'root',
                 ],
+                'eventManager' => [
+                    'listener' => [],
+                    'subscriber' => [],
+                ],
             ];
         };
     }
@@ -195,9 +199,24 @@ final class DoctrineDbalServiceFactory
             $container->get('doctrine.dbal.dbs.options.initializer')();
 
             $managers = new Container();
-            foreach ($container->get('doctrine.dbal.dbs.name') as $name) {
-                $managers->factory((string) $name, static function () {
-                    return new EventManager();
+            foreach ($container->get('doctrine.dbal.dbs.options') as $name => $options) {
+                $managers->factory($name, static function () use ($container, $options) {
+                    $eventManagerOptions = $options['eventManager'];
+
+                    $eventManager = new EventManager();
+
+                    foreach ($eventManagerOptions['listener'] as $listenerConfig) {
+                        $eventManager->addEventListener(
+                            $listenerConfig['events'],
+                            $container->get($listenerConfig['listener'])
+                        );
+                    }
+
+                    foreach ($eventManagerOptions['subscriber'] as $subscriber) {
+                        $eventManager->addEventSubscriber($container->get($subscriber));
+                    }
+
+                    return $eventManager;
                 });
             }
 

@@ -6,11 +6,13 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\ServiceProvider;
 
 use Chubbyphp\DoctrineDbServiceProvider\Logger\DoctrineDbalLogger;
 use Chubbyphp\DoctrineDbServiceProvider\ServiceProvider\DoctrineDbalServiceProvider;
+use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\Common\EventManager;
+use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
@@ -112,6 +114,10 @@ final class DoctrineDbalServiceProviderTest extends TestCase
                 'port' => 3306,
                 'user' => 'root',
             ],
+            'eventManager' => [
+                'listener' => [],
+                'subscriber' => [],
+            ],
         ], $container['doctrine.dbal.db.default_options']);
         // end: doctrine.dbal.db.default_options
 
@@ -143,6 +149,16 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             return $this->getMockByCalls(LoggerInterface::class);
         };
 
+        $container['listener1'] = static function () {
+            return new \stdClass();
+        };
+
+        $container['subscriber1'] = function () {
+            return $this->getMockByCalls(EventSubscriber::class, [
+                Call::create('getSubscribedEvents')->willReturn(['event3', 'event4']),
+            ]);
+        };
+
         $container['doctrine.dbal.types'] = [
             Type::STRING => IntegerType::class,
             'anotherType'.uniqid() => StringType::class,
@@ -166,6 +182,14 @@ final class DoctrineDbalServiceProviderTest extends TestCase
                 'host' => 'mysql.someplace.tld',
                 'password' => 'my_password',
                 'user' => 'my_username',
+            ],
+            'eventManager' => [
+                'listener' => [
+                    ['events' => ['event1', 'event2'], 'listener' => 'listener1'],
+                ],
+                'subscriber' => [
+                    'subscriber1',
+                ],
             ],
         ];
 
@@ -192,6 +216,18 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         self::assertInstanceOf(FilesystemCache::class, $resultCache);
 
         self::assertSame($directory, $resultCache->getDirectory());
+
+        /** @var EventManager $eventManager */
+        $eventManager = $container['doctrine.dbal.db.event_manager'];
+
+        $listeners = $eventManager->getListeners();
+
+        self::assertCount(4, $listeners);
+
+        self::assertSame($container['listener1'], array_shift($listeners['event1']));
+        self::assertSame($container['listener1'], array_shift($listeners['event2']));
+        self::assertSame($container['subscriber1'], array_shift($listeners['event3']));
+        self::assertSame($container['subscriber1'], array_shift($listeners['event4']));
     }
 
     public function testRegisterWithMultipleConnetions(): void
