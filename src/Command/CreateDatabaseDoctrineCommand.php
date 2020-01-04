@@ -96,6 +96,9 @@ EOT
         return $this->connectionRegistry->getDefaultConnectionName();
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getParams(Connection $connection): array
     {
         $params = $connection->getParams();

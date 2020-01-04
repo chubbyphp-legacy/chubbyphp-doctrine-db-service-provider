@@ -260,6 +260,8 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
                 return $entityManager;
             }
         }
+
+        return null;
     }
 
     private function loadConnections(): void

@@ -1,0 +1,17 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Driver\\ClassMapMappingInterface\:\:configureMapping\(\) has no return typehint specified\./'
+            path: %currentWorkingDirectory%/src/Driver/ClassMapMappingInterface.php
+        -
+            message: '/Parameter \#1 \$argument of class ReflectionClass constructor expects class\-string<T of object>\|T of object, string given\./'
+            path: %currentWorkingDirectory%/src/Registry/Psr/DoctrineOrmManagerRegistry.php
+        -
+            message: '/PHPDoc tag @var for variable \$reflectionParentClass contains generic class ReflectionClass but does not specify its types\: T/'
+            path: %currentWorkingDirectory%/src/Registry/Psr/DoctrineOrmManagerRegistry.php
+        -
+            message: '/Parameter \#1 \$argument of class ReflectionClass constructor expects class\-string<T of object>\|T of object, string given\./'
+            path: %currentWorkingDirectory%/src/Registry/DoctrineOrmManagerRegistry.php
+        -
+            message: '/PHPDoc tag @var for variable \$reflectionParentClass contains generic class ReflectionClass but does not specify its types\: T/'
+            path: %currentWorkingDirectory%/src/Registry/DoctrineOrmManagerRegistry.php

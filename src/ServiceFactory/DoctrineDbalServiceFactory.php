@@ -18,6 +18,9 @@ use Doctrine\DBAL\Types\Type;
 
 final class DoctrineDbalServiceFactory
 {
+    /**
+     * @return array<string, callable>
+     */
     public function __invoke(): array
     {
         return [
@@ -183,6 +186,9 @@ final class DoctrineDbalServiceFactory
         };
     }
 
+    /**
+     * @param array<mixed> $cacheDefinition
+     */
     private function getCache(ContainerInterface $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];

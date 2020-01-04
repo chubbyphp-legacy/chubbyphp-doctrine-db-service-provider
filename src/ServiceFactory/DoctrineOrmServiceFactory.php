@@ -32,6 +32,9 @@ use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 
 final class DoctrineOrmServiceFactory
 {
+    /**
+     * @return array<string, callable>
+     */
     public function __invoke(): array
     {
         return [
@@ -213,6 +216,9 @@ final class DoctrineOrmServiceFactory
         };
     }
 
+    /**
+     * @param array<mixed> $cacheDefinition
+     */
     private function getCache(ContainerInterface $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];
@@ -223,6 +229,9 @@ final class DoctrineOrmServiceFactory
         return $cacheFactory($cacheOptions);
     }
 
+    /**
+     * @param array<mixed> $options
+     */
     private function assignSecondLevelCache(ContainerInterface $container, Configuration $config, array $options): void
     {
         if (!$options['second_level_cache.enabled']) {

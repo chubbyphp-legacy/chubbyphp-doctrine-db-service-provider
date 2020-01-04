@@ -179,6 +179,9 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param array<mixed> $cacheDefinition
+     */
     private function getCache(Container $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];
@@ -267,6 +270,9 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
         });
     }
 
+    /**
+     * @return array<string, Type>
+     */
     private function getTypesDefinition(): array
     {
         return [];

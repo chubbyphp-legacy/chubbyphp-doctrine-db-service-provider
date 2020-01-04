@@ -43,7 +43,7 @@ composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^1.6"
 
 ## Copyright
 
-Dominik Zogg 2019
+Dominik Zogg 2020
 
 *There is some code with @see, copied with small modifications by from thirdparties.*
 

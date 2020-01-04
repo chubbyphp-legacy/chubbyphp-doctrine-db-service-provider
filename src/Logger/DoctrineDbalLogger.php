@@ -43,6 +43,11 @@ final class DoctrineDbalLogger implements SQLLogger
     {
     }
 
+    /**
+     * @param array<mixed> $params
+     *
+     * @return array<mixed>
+     */
     private function escapeParams(array $params): array
     {
         foreach ($params as $index => $param) {

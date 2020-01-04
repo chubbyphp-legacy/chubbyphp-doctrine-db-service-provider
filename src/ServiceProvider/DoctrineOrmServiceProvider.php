@@ -217,6 +217,9 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         };
     }
 
+    /**
+     * @param array<mixed> $cacheDefinition
+     */
     private function getCache(Container $container, array $cacheDefinition): Cache
     {
         $cacheType = $cacheDefinition['type'];
@@ -227,6 +230,9 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
         return $cacheFactory($cacheOptions);
     }
 
+    /**
+     * @param array<mixed> $options
+     */
     private function assignSecondLevelCache(Container $container, Configuration $config, array $options): void
     {
         if (!$options['second_level_cache.enabled']) {
