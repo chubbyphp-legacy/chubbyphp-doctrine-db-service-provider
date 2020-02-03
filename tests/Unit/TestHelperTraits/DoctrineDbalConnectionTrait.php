@@ -19,7 +19,7 @@ trait DoctrineDbalConnectionTrait
 {
     private function getConnection(array $stacks = []): Connection
     {
-        /* @var Connection|\PHPUnit_Framework_MockObject_MockObject $connection */
+        /** @var Connection|\PHPUnit_Framework_MockObject_MockObject $connection */
         $connection = $this
             ->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()

@@ -17,9 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class DropDatabaseDoctrineCommand extends Command
 {
-    const RETURN_CODE_NOT_DROP = 1;
-
-    const RETURN_CODE_NO_FORCE = 2;
+    public const RETURN_CODE_NOT_DROP = 1;
+    public const RETURN_CODE_NO_FORCE = 2;
 
     /**
      * @var ConnectionRegistry

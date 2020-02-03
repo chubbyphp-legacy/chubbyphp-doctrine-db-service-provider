@@ -12,8 +12,8 @@ use Psr\Log\LoggerInterface;
  */
 final class DoctrineDbalLogger implements SQLLogger
 {
-    const MAX_STRING_LENGTH = 32;
-    const BINARY_DATA_VALUE = '(binary value)';
+    public const MAX_STRING_LENGTH = 32;
+    public const BINARY_DATA_VALUE = '(binary value)';
 
     /**
      * @var LoggerInterface

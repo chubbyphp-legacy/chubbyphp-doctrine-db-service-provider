@@ -153,7 +153,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
         $entityManagers = [];
         /** @var string $name */
         foreach ($this->managerNames as $name) {
-            /* @var EntityManagerInterface $entityManager */
+            /** @var EntityManagerInterface $entityManager */
             if (isset($this->resetedManagers[$name])) {
                 $entityManager = $this->resetedManagers[$name];
             } else {
@@ -226,6 +226,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
                 // throw the exception only if no manager can solve it
             }
         }
+
         throw ORMException::unknownEntityNamespace($alias);
     }
 
