@@ -8,9 +8,9 @@ use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapDriver;
 use Chubbyphp\DoctrineDbServiceProvider\Driver\ClassMapMappingInterface;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\MappingException;
+use Doctrine\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
 use PHPUnit\Framework\TestCase;
 
 /**

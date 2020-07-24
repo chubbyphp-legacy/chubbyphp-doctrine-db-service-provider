@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Registry;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ConnectionRegistry;
 use Pimple\Container;
 
 final class DoctrineDbalConnectionRegistry implements ConnectionRegistry

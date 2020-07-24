@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Registry\Psr;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ConnectionRegistry;
 use Psr\Container\ContainerInterface;
 
 final class DoctrineDbalConnectionRegistry implements ConnectionRegistry

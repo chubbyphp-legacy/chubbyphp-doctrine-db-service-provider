@@ -6,8 +6,8 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Command\Orm\ClearCache;
 
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\ClearCache\QueryCommand;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand as BaseQueryCommand;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
 /**

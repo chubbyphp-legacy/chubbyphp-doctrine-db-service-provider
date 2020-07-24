@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Command;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\Persistence\ConnectionRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

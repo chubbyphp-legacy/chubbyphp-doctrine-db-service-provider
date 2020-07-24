@@ -6,8 +6,8 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Command\Orm;
 
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\EnsureProductionSettingsCommand;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Console\Command\EnsureProductionSettingsCommand as BaseEnsureProductionSettingsCommand;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
 /**

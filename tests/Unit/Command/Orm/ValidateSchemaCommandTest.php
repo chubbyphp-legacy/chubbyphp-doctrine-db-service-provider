@@ -6,8 +6,8 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Command\Orm;
 
 use Chubbyphp\DoctrineDbServiceProvider\Command\Orm\ValidateSchemaCommand;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand as BaseValidateSchemaCommand;
+use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 
 /**

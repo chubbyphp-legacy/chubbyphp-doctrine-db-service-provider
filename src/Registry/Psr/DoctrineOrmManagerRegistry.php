@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Chubbyphp\DoctrineDbServiceProvider\Registry\Psr;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
+use Doctrine\Persistence\Proxy;
 use Psr\Container\ContainerInterface;
 
 final class DoctrineOrmManagerRegistry implements ManagerRegistry
