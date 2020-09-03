@@ -13,7 +13,7 @@
         "php": "^7.2",
         "doctrine/cache": "^1.6",
         "doctrine/common": "^3.0",
-        "doctrine/dbal": "^2.9",
+        "doctrine/dbal": "^2.10.3",
         "doctrine/persistence": "^2.0"
     },
     "conflict": {

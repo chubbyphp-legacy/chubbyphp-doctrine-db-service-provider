@@ -1,6 +1,12 @@
 parameters:
     ignoreErrors:
         -
+            message: '/Unable to resolve the template type T in call to method static method Doctrine\\DBAL\\DriverManager\:\:getConnection\(\)/'
+            path: %currentWorkingDirectory%/src/Command/CreateDatabaseDoctrineCommand.php
+        -
+            message: '/Unable to resolve the template type T in call to method static method Doctrine\\DBAL\\DriverManager\:\:getConnection\(\)/'
+            path: %currentWorkingDirectory%/src/Command/DropDatabaseDoctrineCommand.php
+        -
             message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Driver\\ClassMapMappingInterface\:\:configureMapping\(\) has no return typehint specified\./'
             path: %currentWorkingDirectory%/src/Driver/ClassMapMappingInterface.php
         -
@@ -33,3 +39,9 @@ parameters:
         -
             message: '/PHPDoc tag @var for variable \$reflectionParentClass contains generic class ReflectionClass but does not specify its types\: T/'
             path: %currentWorkingDirectory%/src/Registry/Psr/DoctrineOrmManagerRegistry.php
+        -
+            message: '/Unable to resolve the template type T in call to method static method Doctrine\\DBAL\\DriverManager\:\:getConnection\(\)/'
+            path: %currentWorkingDirectory%/src/ServiceFactory/DoctrineDbalServiceFactory.php
+        -
+            message: '/Unable to resolve the template type T in call to method static method Doctrine\\DBAL\\DriverManager\:\:getConnection\(\)/'
+            path: %currentWorkingDirectory%/src/ServiceProvider/DoctrineDbalServiceProvider.php
