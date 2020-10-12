@@ -22,17 +22,17 @@
     "require-dev": {
         "chubbyphp/chubbyphp-container": "^1.0",
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
-        "chubbyphp/chubbyphp-mock": "^1.4.2",
+        "chubbyphp/chubbyphp-mock": "^1.5",
         "doctrine/orm": "^2.7.3",
-        "infection/infection": "^0.15",
-        "php-coveralls/php-coveralls": "^2.2",
-        "phploc/phploc": "^5.0",
-        "phpstan/extension-installer": "^1.0.3",
-        "phpstan/phpstan": "^0.12.3",
-        "phpunit/phpunit": "^8.5.1",
+        "infection/infection": "^0.15.3|^0.16.6",
+        "php-coveralls/php-coveralls": "^2.4.1",
+        "phploc/phploc": "^5.0|^6.0.2",
+        "phpstan/extension-installer": "^1.0.5",
+        "phpstan/phpstan": "^0.12.48",
+        "phpunit/phpunit": "^8.5.5",
         "pimple/pimple": "^3.2.3",
         "psr/log": "^1.0",
-        "symfony/yaml": "^2.8.50|^3.4.26|^4.2.7|^5.0"
+        "symfony/yaml": "^3.4.42|^4.4.10|^5.0.10"
     },
     "autoload": {
         "psr-4": { "Chubbyphp\\DoctrineDbServiceProvider\\": "src/" }
