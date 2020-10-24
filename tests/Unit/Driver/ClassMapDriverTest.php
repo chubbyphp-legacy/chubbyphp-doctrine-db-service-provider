@@ -42,7 +42,7 @@ final class ClassMapDriverTest extends TestCase
     public function testLoadMetadataForClassWithInvalidClassMetadata(): void
     {
         $this->expectException(MappingException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             sprintf('/Metadata is of class "[^"]+" instead of "%s"/', preg_quote(ClassMetadata::class))
         );
 
@@ -72,7 +72,7 @@ final class ClassMapDriverTest extends TestCase
     public function testLoadMetadataForClassWithInvalidMapping(): void
     {
         $this->expectException(MappingException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             sprintf('/Class "[^"]+" does not implement the "%s"/', preg_quote(ClassMapMappingInterface::class))
         );
 

@@ -10,29 +10,32 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.2|^8.0",
         "doctrine/cache": "^1.6",
         "doctrine/common": "^3.0",
         "doctrine/dbal": "^2.10.3",
         "doctrine/persistence": "^2.0"
     },
-    "conflict": {
-        "doctrine/orm": "<2.7.3,>=3.0"
-    },
     "require-dev": {
         "chubbyphp/chubbyphp-container": "^1.0",
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
         "chubbyphp/chubbyphp-mock": "^1.5",
+        "friendsofphp/php-cs-fixer": "^2.16@dev",
         "doctrine/orm": "^2.7.3",
-        "infection/infection": "^0.15.3|^0.16.6",
+        "infection/infection": "^0.15.3|^0.16.6|^0.18.0",
         "php-coveralls/php-coveralls": "^2.4.1",
         "phploc/phploc": "^5.0|^6.0.2",
         "phpstan/extension-installer": "^1.0.5",
-        "phpstan/phpstan": "^0.12.48",
-        "phpunit/phpunit": "^8.5.5",
-        "pimple/pimple": "^3.2.3",
+        "phpstan/phpstan": "^0.12.50",
+        "phpunit/phpunit": "^8.5.8|^9.4.1",
+        "pimple/pimple": "^3.3",
         "psr/log": "^1.0",
-        "symfony/yaml": "^3.4.42|^4.4.10|^5.0.10"
+        "symfony/yaml": "^3.4.45|^4.4.15|^5.0.11"
+    },
+    "conflict": {
+        "composer/composer": "<1.10.16",
+        "doctrine/orm": "<2.7.3,>=3.0",
+        "ocramius/package-versions": ">=1.10"
     },
     "autoload": {
         "psr-4": { "Chubbyphp\\DoctrineDbServiceProvider\\": "src/" }
@@ -60,7 +63,7 @@
             "@test:cs",
             "@test:insights"
         ],
-        "test:cs": "mkdir -p build && vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation --cache-file=build/phpcs.cache",
+        "test:cs": "mkdir -p build && PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation --cache-file=build/phpcs.cache",
         "test:infection": "vendor/bin/infection --threads=$(nproc) --min-msi=86 --verbose --coverage=build/phpunit",
         "test:insights": "mkdir -p build && bash -c 'vendor/bin/phpinsights analyse -v --no-interaction --min-quality=93 --disable-security-check | tee build/phpinsights.log; if [ ${PIPESTATUS[0]} -ne \"0\" ]; then exit 1; fi'",
         "test:integration": "vendor/bin/phpunit --testsuite=Integration --cache-result-file=build/phpunit/result.cache",

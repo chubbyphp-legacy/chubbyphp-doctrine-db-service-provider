@@ -73,8 +73,8 @@ EOT
         unset($params['dbname'], $params['path'], $params['url']);
 
         $tmpConnection = DriverManager::getConnection($params);
-        $shouldNotCreateDatabase = $ifNotExists &&
-            in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
+        $shouldNotCreateDatabase = $ifNotExists
+            && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
 
         // Only quote if we don't have a path
         if (!$isPath) {

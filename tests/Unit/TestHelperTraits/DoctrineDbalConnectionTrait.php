@@ -352,7 +352,7 @@ trait DoctrineDbalConnectionTrait
         $queryBuilder
             ->expects(self::any())
             ->method('execute')
-            ->willReturnCallback(function () use ($queryBuilder, &$executeStack, &$executeStackCounter) {
+            ->willReturnCallback(function () use (&$executeStack, &$executeStackCounter) {
                 ++$executeStackCounter;
 
                 $execute = array_shift($executeStack);

@@ -165,7 +165,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         ];
 
         $container['doctrine.dbal.db.cache_factory.filesystem'] = $container->protect(
-            function (array $options) use ($container) {
+            function (array $options) {
                 return new FilesystemCache($options['directory']);
             }
         );

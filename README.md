@@ -2,10 +2,22 @@
 
 [![Build Status](https://api.travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider.png?branch=master)](https://travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-doctrine-db-service-provider/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-doctrine-db-service-provider?branch=master)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/master)](https://travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
-[![Daily Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/d/daily)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
+
+[![bugs](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=bugs)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![code_smells](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=code_smells)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![coverage](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=coverage)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![duplicated_lines_density](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![ncloc](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=ncloc)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![sqale_rating](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![alert_status](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=alert_status)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![reliability_rating](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![security_rating](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=security_rating)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![sqale_index](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=sqale_index)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
+[![vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-doctrine-db-service-provider&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-doctrine-db-service-provider)
 
 ## Description
 
@@ -13,7 +25,7 @@ Doctrine database service providers for doctrine dbal and orm.
 
 ## Requirements
 
- * php: ^7.2
+ * php: ^7.2|^8.0
  * doctrine/cache: ^1.6
  * doctrine/common: ^3.0
  * doctrine/dbal: ^2.9
