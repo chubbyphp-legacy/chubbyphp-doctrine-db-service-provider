@@ -228,25 +228,15 @@ final class DoctrineOrmServiceProviderTest extends TestCase
         $ormServiceProvider = new DoctrineOrmServiceProvider();
         $ormServiceProvider->register($container);
 
-        $container['logger'] = function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        };
+        $container['logger'] = fn () => $this->getMockByCalls(LoggerInterface::class);
 
-        $container['doctrine.orm.entity.listener_resolver.other'] = function () {
-            return new DefaultEntityListenerResolver();
-        };
+        $container['doctrine.orm.entity.listener_resolver.other'] = fn () => new DefaultEntityListenerResolver();
 
-        $container['doctrine.orm.repository.factory.other'] = function () {
-            return new DefaultRepositoryFactory();
-        };
+        $container['doctrine.orm.repository.factory.other'] = fn () => new DefaultRepositoryFactory();
 
-        $container['doctrine.orm.strategy.naming.other'] = function () {
-            return new DefaultNamingStrategy();
-        };
+        $container['doctrine.orm.strategy.naming.other'] = fn () => new DefaultNamingStrategy();
 
-        $container['doctrine.orm.strategy.quote.other'] = function () {
-            return new DefaultQuoteStrategy();
-        };
+        $container['doctrine.orm.strategy.quote.other'] = fn () => new DefaultQuoteStrategy();
 
         $classMetadataFactory = new class() extends ClassMetadataFactory {
         };
@@ -361,9 +351,7 @@ final class DoctrineOrmServiceProviderTest extends TestCase
         $ormServiceProvider = new DoctrineOrmServiceProvider();
         $ormServiceProvider->register($container);
 
-        $container['logger'] = function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        };
+        $container['logger'] = fn () => $this->getMockByCalls(LoggerInterface::class);
 
         $container['doctrine.dbal.dbs.options'] = [
             'one' => [],

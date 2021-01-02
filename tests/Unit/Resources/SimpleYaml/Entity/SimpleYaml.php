@@ -6,13 +6,7 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleYaml\En
 
 final class SimpleYaml
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 }

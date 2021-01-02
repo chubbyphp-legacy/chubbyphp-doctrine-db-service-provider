@@ -14,7 +14,7 @@ class ClassMapDriver implements MappingDriver
     /**
      * @var array<string, string>
      */
-    private $classMap;
+    private array $classMap;
 
     /**
      * @param array<string, string> $classMap

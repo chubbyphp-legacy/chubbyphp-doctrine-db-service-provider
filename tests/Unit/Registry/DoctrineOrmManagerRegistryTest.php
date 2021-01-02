@@ -390,9 +390,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default']),
             Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
             Call::create('offsetGet')->with('doctrine.orm.em.factory')->willReturn(
-                function (Connection $connection, Configuration $config, EventManager $eventManager) {
-                    return EntityManager::create($connection, $config, $eventManager);
-                }
+                fn (Connection $connection, Configuration $config, EventManager $eventManager) => EntityManager::create($connection, $config, $eventManager)
             ),
         ]);
 
@@ -452,9 +450,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('offsetGet')->with('doctrine.orm.ems.name')->willReturn(['default', 'somename']),
             Call::create('offsetGet')->with('doctrine.orm.ems.default')->willReturn('default'),
             Call::create('offsetGet')->with('doctrine.orm.em.factory')->willReturn(
-                function (Connection $connection, Configuration $config, EventManager $eventManager) {
-                    return EntityManager::create($connection, $config, $eventManager);
-                }
+                fn (Connection $connection, Configuration $config, EventManager $eventManager) => EntityManager::create($connection, $config, $eventManager)
             ),
         ]);
 

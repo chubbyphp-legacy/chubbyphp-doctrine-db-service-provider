@@ -42,9 +42,7 @@ final class DoctrineDbalServiceFactory
 
     private function getDbConnectionRegistryDefintion(): \Closure
     {
-        return static function (ContainerInterface $container) {
-            return new DoctrineDbalConnectionRegistry($container);
-        };
+        return static fn (ContainerInterface $container) => new DoctrineDbalConnectionRegistry($container);
     }
 
     private function getDbDefinition(): \Closure
@@ -59,20 +57,12 @@ final class DoctrineDbalServiceFactory
 
     private function getDbApcuCacheFactoryDefinition(): \Closure
     {
-        return static function () {
-            return static function () {
-                return new ApcuCache();
-            };
-        };
+        return static fn () => static fn () => new ApcuCache();
     }
 
     private function getDbArrayCacheFactoryDefinition(): \Closure
     {
-        return static function () {
-            return static function () {
-                return new ArrayCache();
-            };
-        };
+        return static fn () => static fn () => new ArrayCache();
     }
 
     private function getDbConfigDefinition(): \Closure
@@ -87,30 +77,28 @@ final class DoctrineDbalServiceFactory
 
     private function getDbDefaultOptions(): \Closure
     {
-        return static function () {
-            return [
-                'configuration' => [
-                    'auto_commit' => true,
-                    'cache.result' => ['type' => 'array'],
-                    'filter_schema_assets_expression' => null, // @deprecated
-                    'schema_assets_filter' => null,
-                ],
-                'connection' => [
-                    'charset' => 'utf8mb4',
-                    'dbname' => null,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => null,
-                    'path' => null,
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-                'eventManager' => [
-                    'listener' => [],
-                    'subscriber' => [],
-                ],
-            ];
-        };
+        return static fn () => [
+            'configuration' => [
+                'auto_commit' => true,
+                'cache.result' => ['type' => 'array'],
+                'filter_schema_assets_expression' => null, // @deprecated
+                'schema_assets_filter' => null,
+            ],
+            'connection' => [
+                'charset' => 'utf8mb4',
+                'dbname' => null,
+                'driver' => 'pdo_mysql',
+                'host' => 'localhost',
+                'password' => null,
+                'path' => null,
+                'port' => 3306,
+                'user' => 'root',
+            ],
+            'eventManager' => [
+                'listener' => [],
+                'subscriber' => [],
+            ],
+        ];
     }
 
     private function getDbEventManagerDefinition(): \Closure
@@ -138,9 +126,7 @@ final class DoctrineDbalServiceFactory
                     $manager = $container->get('doctrine.dbal.dbs.event_manager')->get($name);
                 }
 
-                $dbs->factory($name, static function () use ($options, $config, $manager) {
-                    return DriverManager::getConnection($options['connection'], $config, $manager);
-                });
+                $dbs->factory($name, static fn () => DriverManager::getConnection($options['connection'], $config, $manager));
             }
 
             return $dbs;
@@ -241,62 +227,52 @@ final class DoctrineDbalServiceFactory
 
     private function getDbsOptionsInitializerDefinition(): \Closure
     {
-        return static function (ContainerInterface $container) {
-            return static function () use ($container): void {
-                static $initialized = false;
+        return static fn (ContainerInterface $container) => static function () use ($container): void {
+            static $initialized = false;
 
-                if ($initialized) {
-                    return;
+            if ($initialized) {
+                return;
+            }
+
+            $initialized = true;
+
+            foreach ($container->get('doctrine.dbal.types') as $typeName => $typeClass) {
+                if (Type::hasType($typeName)) {
+                    Type::overrideType($typeName, $typeClass);
+                } else {
+                    Type::addType($typeName, $typeClass);
                 }
+            }
 
-                $initialized = true;
+            if (!$container->has('doctrine.dbal.dbs.options')) {
+                $container->factory(
+                    'doctrine.dbal.dbs.options',
+                    static fn (ContainerInterface $container) => [
+                        'default' => $container->has('doctrine.dbal.db.options')
+                            ? $container->get('doctrine.dbal.db.options')
+                            : [],
+                    ]
+                );
+            }
 
-                foreach ($container->get('doctrine.dbal.types') as $typeName => $typeClass) {
-                    if (Type::hasType($typeName)) {
-                        Type::overrideType($typeName, $typeClass);
-                    } else {
-                        Type::addType($typeName, $typeClass);
-                    }
+            $tmp = $container->get('doctrine.dbal.dbs.options');
+            foreach ($tmp as $name => &$options) {
+                $options = array_replace_recursive(
+                    $container->get('doctrine.dbal.db.default_options'),
+                    $options
+                );
+
+                if (!$container->has('doctrine.dbal.dbs.default')) {
+                    $container->factory('doctrine.dbal.dbs.default', static fn () => $name);
                 }
+            }
 
-                if (!$container->has('doctrine.dbal.dbs.options')) {
-                    $container->factory(
-                        'doctrine.dbal.dbs.options',
-                        static function (ContainerInterface $container) {
-                            return [
-                                'default' => $container->has('doctrine.dbal.db.options')
-                                    ? $container->get('doctrine.dbal.db.options')
-                                    : [],
-                            ];
-                        }
-                    );
-                }
-
-                $tmp = $container->get('doctrine.dbal.dbs.options');
-                foreach ($tmp as $name => &$options) {
-                    $options = array_replace_recursive(
-                        $container->get('doctrine.dbal.db.default_options'),
-                        $options
-                    );
-
-                    if (!$container->has('doctrine.dbal.dbs.default')) {
-                        $container->factory('doctrine.dbal.dbs.default', static function () use ($name) {
-                            return $name;
-                        });
-                    }
-                }
-
-                $container->factory('doctrine.dbal.dbs.options', static function () use ($tmp) {
-                    return $tmp;
-                });
-            };
+            $container->factory('doctrine.dbal.dbs.options', static fn () => $tmp);
         };
     }
 
     private function getTypesDefinition(): \Closure
     {
-        return static function () {
-            return [];
-        };
+        return static fn () => [];
     }
 }

@@ -145,19 +145,13 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         $dbalServiceProvider = new DoctrineDbalServiceProvider();
         $dbalServiceProvider->register($container);
 
-        $container['logger'] = function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        };
+        $container['logger'] = fn () => $this->getMockByCalls(LoggerInterface::class);
 
-        $container['listener1'] = static function () {
-            return new \stdClass();
-        };
+        $container['listener1'] = static fn () => new \stdClass();
 
-        $container['subscriber1'] = function () {
-            return $this->getMockByCalls(EventSubscriber::class, [
-                Call::create('getSubscribedEvents')->willReturn(['event3', 'event4']),
-            ]);
-        };
+        $container['subscriber1'] = fn () => $this->getMockByCalls(EventSubscriber::class, [
+            Call::create('getSubscribedEvents')->willReturn(['event3', 'event4']),
+        ]);
 
         $container['doctrine.dbal.types'] = [
             Type::STRING => IntegerType::class,
@@ -165,9 +159,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         ];
 
         $container['doctrine.dbal.db.cache_factory.filesystem'] = $container->protect(
-            function (array $options) {
-                return new FilesystemCache($options['directory']);
-            }
+            fn (array $options) => new FilesystemCache($options['directory'])
         );
 
         $directory = sys_get_temp_dir();
@@ -237,9 +229,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         $dbalServiceProvider = new DoctrineDbalServiceProvider();
         $dbalServiceProvider->register($container);
 
-        $container['logger'] = function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        };
+        $container['logger'] = fn () => $this->getMockByCalls(LoggerInterface::class);
 
         $container['doctrine.dbal.dbs.options'] = [
             'mysql_read' => [
@@ -258,7 +248,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             'mysql_write' => [
                 'configuration' => [
                     'cache.result' => ['type' => 'array'],
-                    'schema_assets_filter' => function (string $assetName) { return preg_match('/^.*$/', $assetName); },
+                    'schema_assets_filter' => fn (string $assetName) => preg_match('/^.*$/', $assetName),
                 ],
                 'connection' => [
                     'dbname' => 'my_database',

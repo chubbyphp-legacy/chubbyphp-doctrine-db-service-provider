@@ -6,13 +6,7 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Xml\Entity;
 
 final class Xml
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 }

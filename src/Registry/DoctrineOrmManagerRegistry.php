@@ -16,45 +16,30 @@ use Pimple\Container;
 
 final class DoctrineOrmManagerRegistry implements ManagerRegistry
 {
-    /**
-     * @var Container
-     */
-    private $container;
+    private Container $container;
+
+    private ?Container $connections = null;
 
     /**
-     * @var Container
+     * @var array<int, string>|null
      */
-    private $connections;
+    private ?array $connectionNames = null;
 
-    /**
-     * @var array<int, string>
-     */
-    private $connectionNames;
+    private ?string $defaultConnectionName;
 
-    /**
-     * @var string
-     */
-    private $defaultConnectionName;
-
-    /**
-     * @var Container
-     */
-    private $originalEntityManagers;
+    private ?Container $originalEntityManagers = null;
 
     /**
      * @var array<string, EntityManagerInterface>
      */
-    private $resetedManagers = [];
+    private array $resetedManagers = [];
 
     /**
-     * @var array<int, string>
+     * @var array<int, string>|null
      */
-    private $managerNames;
+    private ?array $managerNames = null;
 
-    /**
-     * @var string
-     */
-    private $defaultManagerName;
+    private ?string $defaultManagerName = null;
 
     public function __construct(Container $container)
     {
@@ -77,7 +62,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         $this->loadConnections();
 
-        $name = $name ?? $this->getDefaultConnectionName();
+        $name ??= $this->getDefaultConnectionName();
 
         if (!isset($this->connections[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing connection with name "%s".', $name));
@@ -130,7 +115,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         $this->loadManagers();
 
-        $name = $name ?? $this->getDefaultManagerName();
+        $name ??= $this->getDefaultManagerName();
 
         if (!isset($this->originalEntityManagers[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing manager with name "%s".', $name));
@@ -185,7 +170,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     {
         $this->loadManagers();
 
-        $name = $name ?? $this->getDefaultManagerName();
+        $name ??= $this->getDefaultManagerName();
 
         if (!isset($this->originalEntityManagers[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing manager with name "%s".', $name));

@@ -17,10 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class CreateDatabaseDoctrineCommand extends Command
 {
-    /**
-     * @var ConnectionRegistry
-     */
-    private $connectionRegistry;
+    private ConnectionRegistry $connectionRegistry;
 
     public function __construct(ConnectionRegistry $connectionRegistry)
     {

@@ -255,25 +255,19 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('getSchemaManager')
-            ->willReturnCallback(function () use ($schemaManager) {
-                return $schemaManager;
-            })
+            ->willReturnCallback(fn () => $schemaManager)
         ;
 
         $connection
             ->expects(self::any())
             ->method('getDatabasePlatform')
-            ->willReturnCallback(function () use ($databasePlatform) {
-                return $databasePlatform;
-            })
+            ->willReturnCallback(fn () => $databasePlatform)
         ;
 
         $connection
             ->expects(self::any())
             ->method('getParams')
-            ->willReturnCallback(function () use ($params) {
-                return $params;
-            })
+            ->willReturnCallback(fn () => $params)
         ;
 
         return $connection;
@@ -342,9 +336,7 @@ trait DoctrineDbalConnectionTrait
         $queryBuilder
             ->expects(self::any())
             ->method('expr')
-            ->willReturnCallback(function () {
-                return $this->getExpressionBuilder();
-            })
+            ->willReturnCallback(fn () => $this->getExpressionBuilder())
         ;
 
         $executeStackCounter = 0;
@@ -404,9 +396,7 @@ trait DoctrineDbalConnectionTrait
             $expr
                 ->expects(self::any())
                 ->method($comparsion)
-                ->willReturnCallback(function () use ($comparsion) {
-                    return ['method' => $comparsion, 'arguments' => func_get_args()];
-                })
+                ->willReturnCallback(fn () => ['method' => $comparsion, 'arguments' => func_get_args()])
             ;
         }
 
@@ -511,9 +501,7 @@ trait DoctrineDbalConnectionTrait
         $schemaManager
             ->expects(self::any())
             ->method('listDatabases')
-            ->willReturnCallback(function () use ($listDatabases) {
-                return $listDatabases;
-            })
+            ->willReturnCallback(fn () => $listDatabases)
         ;
 
         return $schemaManager;
@@ -574,9 +562,7 @@ trait DoctrineDbalConnectionTrait
         $platform
             ->expects(self::any())
             ->method('quoteSingleIdentifier')
-            ->willReturnCallback(function ($str) {
-                return $str;
-            })
+            ->willReturnCallback(fn ($str) => $str)
         ;
 
         return $platform;

@@ -8,15 +8,9 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 
 final class StaticPhp
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
     /**
      * @throws \Doctrine\ORM\Mapping\MappingException

@@ -10,25 +10,16 @@ use Pimple\Container;
 
 final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
 {
-    /**
-     * @var Container
-     */
-    private $container;
+    private Container $container;
+
+    private ?Container $connections = null;
 
     /**
-     * @var Container
+     * @var array<int, string>|null
      */
-    private $connections;
+    private ?array $connectionNames = null;
 
-    /**
-     * @var array<int, string>
-     */
-    private $connectionNames;
-
-    /**
-     * @var string
-     */
-    private $defaultConnectionName;
+    private ?string $defaultConnectionName;
 
     public function __construct(Container $container)
     {
@@ -51,7 +42,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     {
         $this->loadConnections();
 
-        $name = $name ?? $this->getDefaultConnectionName();
+        $name ??= $this->getDefaultConnectionName();
 
         if (!isset($this->connections[$name])) {
             throw new \InvalidArgumentException(sprintf('Missing connection with name "%s".', $name));

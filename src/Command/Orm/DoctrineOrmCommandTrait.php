@@ -14,10 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 trait DoctrineOrmCommandTrait
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
+    private ManagerRegistry $managerRegistry;
 
     public function __construct(ManagerRegistry $managerRegistry, ?string $name = null)
     {

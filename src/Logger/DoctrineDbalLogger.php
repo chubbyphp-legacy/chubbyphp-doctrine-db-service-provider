@@ -15,10 +15,7 @@ final class DoctrineDbalLogger implements SQLLogger
     public const MAX_STRING_LENGTH = 32;
     public const BINARY_DATA_VALUE = '(binary value)';
 
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {

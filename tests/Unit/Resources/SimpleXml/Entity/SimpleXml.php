@@ -6,13 +6,7 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleXml\Ent
 
 final class SimpleXml
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 }

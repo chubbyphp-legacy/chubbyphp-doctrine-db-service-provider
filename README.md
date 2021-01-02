@@ -25,7 +25,7 @@ Doctrine database service providers for doctrine dbal and orm.
 
 ## Requirements
 
- * php: ^7.2|^8.0
+ * php: ^7.4|^8.0
  * doctrine/cache: ^1.6
  * doctrine/common: ^3.0
  * doctrine/dbal: ^2.9
@@ -40,7 +40,7 @@ Doctrine database service providers for doctrine dbal and orm.
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-doctrine-db-service-provider][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^2.0"
+composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^2.1"
 ```
 
 ## Usage

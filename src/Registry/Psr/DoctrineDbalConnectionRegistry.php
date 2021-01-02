@@ -10,25 +10,16 @@ use Psr\Container\ContainerInterface;
 
 final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
+
+    private ?ContainerInterface $connections = null;
 
     /**
-     * @var ContainerInterface
+     * @var array<int, string>|null
      */
-    private $connections;
+    private ?array $connectionNames = null;
 
-    /**
-     * @var array<int, string>
-     */
-    private $connectionNames;
-
-    /**
-     * @var string
-     */
-    private $defaultConnectionName;
+    private ?string $defaultConnectionName = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -51,7 +42,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     {
         $this->loadConnections();
 
-        $name = $name ?? $this->getDefaultConnectionName();
+        $name ??= $this->getDefaultConnectionName();
 
         if (!$this->connections->has($name)) {
             throw new \InvalidArgumentException(sprintf('Missing connection with name "%s".', $name));

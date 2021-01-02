@@ -20,10 +20,7 @@ final class DropDatabaseDoctrineCommand extends Command
     public const RETURN_CODE_NOT_DROP = 1;
     public const RETURN_CODE_NO_FORCE = 2;
 
-    /**
-     * @var ConnectionRegistry
-     */
-    private $connectionRegistry;
+    private ConnectionRegistry $connectionRegistry;
 
     public function __construct(ConnectionRegistry $connectionRegistry)
     {

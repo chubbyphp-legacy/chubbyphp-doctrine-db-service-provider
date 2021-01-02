@@ -6,13 +6,7 @@ namespace Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\ClassMap\Enti
 
 final class ClassMap
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 }

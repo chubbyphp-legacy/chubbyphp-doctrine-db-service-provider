@@ -118,9 +118,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
     private function getOrmEmFactory(Container $container): callable
     {
         return $container->protect(
-            static function (Connection $connection, Configuration $config, EventManager $eventManager) {
-                return EntityManager::create($connection, $config, $eventManager);
-            }
+            static fn (Connection $connection, Configuration $config, EventManager $eventManager) => EntityManager::create($connection, $config, $eventManager)
         );
     }
 
@@ -137,13 +135,11 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
                     $config = $container['doctrine.orm.ems.config'][$name];
                 }
 
-                $ems[$name] = static function () use ($container, $options, $config) {
-                    return $container['doctrine.orm.em.factory'](
-                        $container['doctrine.dbal.dbs'][$options['connection']],
-                        $config,
-                        $container['doctrine.dbal.dbs.event_manager'][$options['connection']]
-                    );
-                };
+                $ems[$name] = static fn () => $container['doctrine.orm.em.factory'](
+                    $container['doctrine.dbal.dbs'][$options['connection']],
+                    $config,
+                    $container['doctrine.dbal.dbs.event_manager'][$options['connection']]
+                );
             }
 
             return $ems;
@@ -296,78 +292,58 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 
     private function getOrmEntityListenerResolverDefinition(): callable
     {
-        return static function () {
-            return new DefaultEntityListenerResolver();
-        };
+        return static fn () => new DefaultEntityListenerResolver();
     }
 
     private function getOrmManagerRegistryDefintion(Container $container): callable
     {
-        return static function () use ($container) {
-            return new DoctrineOrmManagerRegistry($container);
-        };
+        return static fn () => new DoctrineOrmManagerRegistry($container);
     }
 
     private function getOrmMappingDriverFactoryAnnotation(Container $container): callable
     {
-        return $container->protect(static function (array $mapping, Configuration $config) {
-            return $config->newDefaultAnnotationDriver($mapping['path'], false);
-        });
+        return $container->protect(static fn (array $mapping, Configuration $config) => $config->newDefaultAnnotationDriver($mapping['path'], false));
     }
 
     private function getOrmMappingDriverFactoryClassMap(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new ClassMapDriver($mapping['map']);
-        });
+        return $container->protect(static fn (array $mapping) => new ClassMapDriver($mapping['map']));
     }
 
     private function getOrmMappingDriverFactoryPhp(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new PHPDriver($mapping['path']);
-        });
+        return $container->protect(static fn (array $mapping) => new PHPDriver($mapping['path']));
     }
 
     private function getOrmMappingDriverFactorySimpleYaml(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new SimplifiedYamlDriver(
-                [$mapping['path'] => $mapping['namespace']],
-                $mapping['extension'] ?? SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION
-            );
-        });
+        return $container->protect(static fn (array $mapping) => new SimplifiedYamlDriver(
+            [$mapping['path'] => $mapping['namespace']],
+            $mapping['extension'] ?? SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION
+        ));
     }
 
     private function getOrmMappingDriverFactorySimpleXml(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new SimplifiedXmlDriver(
-                [$mapping['path'] => $mapping['namespace']],
-                $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
-            );
-        });
+        return $container->protect(static fn (array $mapping) => new SimplifiedXmlDriver(
+            [$mapping['path'] => $mapping['namespace']],
+            $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
+        ));
     }
 
     private function getOrmMappingDriverFactoryStaticPhp(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new StaticPHPDriver($mapping['path']);
-        });
+        return $container->protect(static fn (array $mapping) => new StaticPHPDriver($mapping['path']));
     }
 
     private function getOrmMappingDriverFactoryYaml(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new YamlDriver($mapping['path'], $mapping['extension'] ?? YamlDriver::DEFAULT_FILE_EXTENSION);
-        });
+        return $container->protect(static fn (array $mapping) => new YamlDriver($mapping['path'], $mapping['extension'] ?? YamlDriver::DEFAULT_FILE_EXTENSION));
     }
 
     private function getOrmMappingDriverFactoryXml(Container $container): callable
     {
-        return $container->protect(static function (array $mapping) {
-            return new XmlDriver($mapping['path'], $mapping['extension'] ?? XmlDriver::DEFAULT_FILE_EXTENSION);
-        });
+        return $container->protect(static fn (array $mapping) => new XmlDriver($mapping['path'], $mapping['extension'] ?? XmlDriver::DEFAULT_FILE_EXTENSION));
     }
 
     private function getOrmMappingDriverChainDefinition(Container $container): callable
@@ -390,22 +366,16 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
 
     private function getOrmRepositoryFactoryDefinition(): callable
     {
-        return static function () {
-            return new DefaultRepositoryFactory();
-        };
+        return static fn () => new DefaultRepositoryFactory();
     }
 
     private function getOrmNamingStrategyDefinition(): callable
     {
-        return static function () {
-            return new DefaultNamingStrategy();
-        };
+        return static fn () => new DefaultNamingStrategy();
     }
 
     private function getOrmQuoteStrategyDefinition(): callable
     {
-        return static function () {
-            return new DefaultQuoteStrategy();
-        };
+        return static fn () => new DefaultQuoteStrategy();
     }
 }

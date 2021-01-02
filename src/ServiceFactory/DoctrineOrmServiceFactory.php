@@ -85,40 +85,34 @@ final class DoctrineOrmServiceFactory
 
     private function getOrmEmDefaultOptions(): \Closure
     {
-        return static function () {
-            return [
-                'cache.hydration' => ['type' => 'array'],
-                'cache.metadata' => ['type' => 'array'],
-                'cache.query' => ['type' => 'array'],
-                'class_metadata.factory.name' => ClassMetadataFactory::class,
-                'connection' => 'default',
-                'custom.functions.datetime' => [],
-                'custom.functions.numeric' => [],
-                'custom.functions.string' => [],
-                'custom.hydration_modes' => [],
-                'entity.listener_resolver' => 'default',
-                'mappings' => [],
-                'proxies.auto_generate' => true,
-                'proxies.dir' => sys_get_temp_dir().'/doctrine/orm/proxies',
-                'proxies.namespace' => 'DoctrineProxy',
-                'query_hints' => [],
-                'repository.default.class' => EntityRepository::class,
-                'repository.factory' => 'default',
-                'second_level_cache' => ['type' => 'array'],
-                'second_level_cache.enabled' => false,
-                'strategy.naming' => 'default',
-                'strategy.quote' => 'default',
-            ];
-        };
+        return static fn () => [
+            'cache.hydration' => ['type' => 'array'],
+            'cache.metadata' => ['type' => 'array'],
+            'cache.query' => ['type' => 'array'],
+            'class_metadata.factory.name' => ClassMetadataFactory::class,
+            'connection' => 'default',
+            'custom.functions.datetime' => [],
+            'custom.functions.numeric' => [],
+            'custom.functions.string' => [],
+            'custom.hydration_modes' => [],
+            'entity.listener_resolver' => 'default',
+            'mappings' => [],
+            'proxies.auto_generate' => true,
+            'proxies.dir' => sys_get_temp_dir().'/doctrine/orm/proxies',
+            'proxies.namespace' => 'DoctrineProxy',
+            'query_hints' => [],
+            'repository.default.class' => EntityRepository::class,
+            'repository.factory' => 'default',
+            'second_level_cache' => ['type' => 'array'],
+            'second_level_cache.enabled' => false,
+            'strategy.naming' => 'default',
+            'strategy.quote' => 'default',
+        ];
     }
 
     private function getOrmEmFactory(): \Closure
     {
-        return static function () {
-            return static function (Connection $connection, Configuration $config, EventManager $eventManager) {
-                return EntityManager::create($connection, $config, $eventManager);
-            };
-        };
+        return static fn () => static fn (Connection $connection, Configuration $config, EventManager $eventManager) => EntityManager::create($connection, $config, $eventManager);
     }
 
     private function getOrmEmsDefinition(): \Closure
@@ -134,13 +128,11 @@ final class DoctrineOrmServiceFactory
                     $config = $container->get('doctrine.orm.ems.config')->get($name);
                 }
 
-                $ems->factory($name, static function () use ($container, $options, $config) {
-                    return $container->get('doctrine.orm.em.factory')(
-                        $container->get('doctrine.dbal.dbs')->get($options['connection']),
-                        $config,
-                        $container->get('doctrine.dbal.dbs.event_manager')->get($options['connection'])
-                    );
-                });
+                $ems->factory($name, static fn () => $container->get('doctrine.orm.em.factory')(
+                    $container->get('doctrine.dbal.dbs')->get($options['connection']),
+                    $config,
+                    $container->get('doctrine.dbal.dbs.event_manager')->get($options['connection'])
+                ));
             }
 
             return $ems;
@@ -265,174 +257,122 @@ final class DoctrineOrmServiceFactory
 
     private function getOrmEmsOptionsInitializerDefinition(): \Closure
     {
-        return static function (ContainerInterface $container) {
-            return static function () use ($container): void {
-                static $initialized = false;
+        return static fn (ContainerInterface $container) => static function () use ($container): void {
+            static $initialized = false;
 
-                if ($initialized) {
-                    return;
+            if ($initialized) {
+                return;
+            }
+
+            $initialized = true;
+
+            if (!$container->has('doctrine.orm.ems.options')) {
+                $container->factory('doctrine.orm.ems.options', static fn (ContainerInterface $container) => [
+                    'default' => $container->has('doctrine.orm.em.options')
+                        ? $container->get('doctrine.orm.em.options')
+                        : [],
+                ]);
+            }
+
+            $tmp = $container->get('doctrine.orm.ems.options');
+            foreach ($tmp as $name => &$options) {
+                $options = array_replace($container->get('doctrine.orm.em.default_options'), $options);
+
+                if (!$container->has('doctrine.orm.ems.default')) {
+                    $container->factory('doctrine.orm.ems.default', static fn () => $name);
                 }
+            }
 
-                $initialized = true;
-
-                if (!$container->has('doctrine.orm.ems.options')) {
-                    $container->factory('doctrine.orm.ems.options', static function (ContainerInterface $container) {
-                        return [
-                            'default' => $container->has('doctrine.orm.em.options')
-                                ? $container->get('doctrine.orm.em.options')
-                                : [],
-                        ];
-                    });
-                }
-
-                $tmp = $container->get('doctrine.orm.ems.options');
-                foreach ($tmp as $name => &$options) {
-                    $options = array_replace($container->get('doctrine.orm.em.default_options'), $options);
-
-                    if (!$container->has('doctrine.orm.ems.default')) {
-                        $container->factory('doctrine.orm.ems.default', static function () use ($name) {
-                            return $name;
-                        });
-                    }
-                }
-
-                $container->factory('doctrine.orm.ems.options', static function () use ($tmp) {
-                    return $tmp;
-                });
-            };
+            $container->factory('doctrine.orm.ems.options', static fn () => $tmp);
         };
     }
 
     private function getOrmEntityListenerResolverDefinition(): \Closure
     {
-        return static function () {
-            return new DefaultEntityListenerResolver();
-        };
+        return static fn () => new DefaultEntityListenerResolver();
     }
 
     private function getOrmManagerRegistryDefintion(): \Closure
     {
-        return static function (ContainerInterface $container) {
-            return new DoctrineOrmManagerRegistry($container);
-        };
+        return static fn (ContainerInterface $container) => new DoctrineOrmManagerRegistry($container);
     }
 
     private function getOrmMappingDriverFactoryAnnotation(): \Closure
     {
-        return static function () {
-            return static function (array $mapping, Configuration $config) {
-                return $config->newDefaultAnnotationDriver($mapping['path'], false);
-            };
-        };
+        return static fn () => static fn (array $mapping, Configuration $config) => $config->newDefaultAnnotationDriver($mapping['path'], false);
     }
 
     private function getOrmMappingDriverFactoryClassMap(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new ClassMapDriver($mapping['map']);
-            };
-        };
+        return static fn () => static fn (array $mapping) => new ClassMapDriver($mapping['map']);
     }
 
     private function getOrmMappingDriverFactoryPhp(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new PHPDriver($mapping['path']);
-            };
-        };
+        return static fn () => static fn (array $mapping) => new PHPDriver($mapping['path']);
     }
 
     private function getOrmMappingDriverFactorySimpleYaml(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new SimplifiedYamlDriver(
-                    [$mapping['path'] => $mapping['namespace']],
-                    $mapping['extension'] ?? SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION
-                );
-            };
-        };
+        return static fn () => static fn (array $mapping) => new SimplifiedYamlDriver(
+            [$mapping['path'] => $mapping['namespace']],
+            $mapping['extension'] ?? SimplifiedYamlDriver::DEFAULT_FILE_EXTENSION
+        );
     }
 
     private function getOrmMappingDriverFactorySimpleXml(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new SimplifiedXmlDriver(
-                    [$mapping['path'] => $mapping['namespace']],
-                    $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
-                );
-            };
-        };
+        return static fn () => static fn (array $mapping) => new SimplifiedXmlDriver(
+            [$mapping['path'] => $mapping['namespace']],
+            $mapping['extension'] ?? SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION
+        );
     }
 
     private function getOrmMappingDriverFactoryStaticPhp(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new StaticPHPDriver($mapping['path']);
-            };
-        };
+        return static fn () => static fn (array $mapping) => new StaticPHPDriver($mapping['path']);
     }
 
     private function getOrmMappingDriverFactoryYaml(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new YamlDriver($mapping['path'], $mapping['extension'] ?? YamlDriver::DEFAULT_FILE_EXTENSION);
-            };
-        };
+        return static fn () => static fn (array $mapping) => new YamlDriver($mapping['path'], $mapping['extension'] ?? YamlDriver::DEFAULT_FILE_EXTENSION);
     }
 
     private function getOrmMappingDriverFactoryXml(): \Closure
     {
-        return static function () {
-            return static function (array $mapping) {
-                return new XmlDriver($mapping['path'], $mapping['extension'] ?? XmlDriver::DEFAULT_FILE_EXTENSION);
-            };
-        };
+        return static fn () => static fn (array $mapping) => new XmlDriver($mapping['path'], $mapping['extension'] ?? XmlDriver::DEFAULT_FILE_EXTENSION);
     }
 
     private function getOrmMappingDriverChainDefinition(): \Closure
     {
-        return static function (ContainerInterface $container) {
-            return static function (Configuration $config, array $mappings) use ($container) {
-                $chain = new MappingDriverChain();
-                foreach ($mappings as $mapping) {
-                    if (isset($mapping['alias'])) {
-                        $config->addEntityNamespace($mapping['alias'], $mapping['namespace']);
-                    }
-
-                    $factoryKey = sprintf('doctrine.orm.mapping_driver.factory.%s', $mapping['type']);
-
-                    $chain->addDriver($container->get($factoryKey)($mapping, $config), $mapping['namespace']);
+        return static fn (ContainerInterface $container) => static function (Configuration $config, array $mappings) use ($container) {
+            $chain = new MappingDriverChain();
+            foreach ($mappings as $mapping) {
+                if (isset($mapping['alias'])) {
+                    $config->addEntityNamespace($mapping['alias'], $mapping['namespace']);
                 }
 
-                return $chain;
-            };
+                $factoryKey = sprintf('doctrine.orm.mapping_driver.factory.%s', $mapping['type']);
+
+                $chain->addDriver($container->get($factoryKey)($mapping, $config), $mapping['namespace']);
+            }
+
+            return $chain;
         };
     }
 
     private function getOrmRepositoryFactoryDefinition(): \Closure
     {
-        return static function () {
-            return new DefaultRepositoryFactory();
-        };
+        return static fn () => new DefaultRepositoryFactory();
     }
 
     private function getOrmNamingStrategyDefinition(): \Closure
     {
-        return static function () {
-            return new DefaultNamingStrategy();
-        };
+        return static fn () => new DefaultNamingStrategy();
     }
 
     private function getOrmQuoteStrategyDefinition(): \Closure
     {
-        return static function () {
-            return new DefaultQuoteStrategy();
-        };
+        return static fn () => new DefaultQuoteStrategy();
     }
 }

@@ -41,9 +41,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
     private function getDbConnectionRegistryDefintion(Container $container): callable
     {
-        return static function () use ($container) {
-            return new DoctrineDbalConnectionRegistry($container);
-        };
+        return static fn () => new DoctrineDbalConnectionRegistry($container);
     }
 
     private function getDbDefinition(Container $container): callable
@@ -57,16 +55,12 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
 
     private function getDbApcuCacheFactoryDefinition(Container $container): callable
     {
-        return $container->protect(static function () {
-            return new ApcuCache();
-        });
+        return $container->protect(static fn () => new ApcuCache());
     }
 
     private function getDbArrayCacheFactoryDefinition(Container $container): callable
     {
-        return $container->protect(static function () {
-            return new ArrayCache();
-        });
+        return $container->protect(static fn () => new ArrayCache());
     }
 
     private function getDbConfigDefinition(Container $container): callable
@@ -131,9 +125,7 @@ final class DoctrineDbalServiceProvider implements ServiceProviderInterface
                     $manager = $container['doctrine.dbal.dbs.event_manager'][$name];
                 }
 
-                $dbs[$name] = static function () use ($options, $config, $manager) {
-                    return DriverManager::getConnection($options['connection'], $config, $manager);
-                };
+                $dbs[$name] = static fn () => DriverManager::getConnection($options['connection'], $config, $manager);
             }
 
             return $dbs;

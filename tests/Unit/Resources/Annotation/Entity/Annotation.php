@@ -13,15 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
 class Annotation
 {
     /**
-     * @var string
      * @ORM\Id
      * @ORM\Column(type="string")
      */
-    private $id;
+    private string $id;
 
     /**
-     * @var string
      * @ORM\Column(type="string")
      */
-    private $name;
+    private string $name;
 }

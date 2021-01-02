@@ -136,7 +136,7 @@ final class DoctrineDbalConnectionRegistryTest extends TestCase
         /** @var ContainerInterface|MockObject $container */
         $container = $this->getMockByCalls(ContainerInterface::class, [
             Call::create('get')->with('doctrine.dbal.dbs')->willReturn(
-                $this->getMockByCalls(Container::class)
+                $this->getMockByCalls(ContainerInterface::class)
             ),
             Call::create('get')->with('doctrine.dbal.dbs.name')->willReturn(['default']),
             Call::create('get')->with('doctrine.dbal.dbs.default')->willReturn('default'),

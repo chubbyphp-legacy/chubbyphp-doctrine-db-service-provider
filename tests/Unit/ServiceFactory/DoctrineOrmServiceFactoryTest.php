@@ -220,25 +220,15 @@ final class DoctrineOrmServiceFactoryTest extends TestCase
         $container->factories((new DoctrineDbalServiceFactory())());
         $container->factories((new DoctrineOrmServiceFactory())());
 
-        $container->factory('logger', function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        });
+        $container->factory('logger', fn () => $this->getMockByCalls(LoggerInterface::class));
 
-        $container->factory('doctrine.orm.entity.listener_resolver.other', static function () {
-            return new DefaultEntityListenerResolver();
-        });
+        $container->factory('doctrine.orm.entity.listener_resolver.other', static fn () => new DefaultEntityListenerResolver());
 
-        $container->factory('doctrine.orm.repository.factory.other', static function () {
-            return new DefaultRepositoryFactory();
-        });
+        $container->factory('doctrine.orm.repository.factory.other', static fn () => new DefaultRepositoryFactory());
 
-        $container->factory('doctrine.orm.strategy.naming.other', static function () {
-            return new DefaultNamingStrategy();
-        });
+        $container->factory('doctrine.orm.strategy.naming.other', static fn () => new DefaultNamingStrategy());
 
-        $container->factory('doctrine.orm.strategy.quote.other', static function () {
-            return new DefaultQuoteStrategy();
-        });
+        $container->factory('doctrine.orm.strategy.quote.other', static fn () => new DefaultQuoteStrategy());
 
         $classMetadataFactory = new class() extends ClassMetadataFactory {
         };
@@ -253,46 +243,44 @@ final class DoctrineOrmServiceFactoryTest extends TestCase
 
         $repositoryClass = get_class($repository);
 
-        $container->factory('doctrine.orm.em.options', static function () use ($classMetadataFactoryClass, $repositoryClass) {
-            return [
-                'cache.hydration' => ['type' => 'apcu'],
-                'cache.metadata' => ['type' => 'apcu'],
-                'cache.query' => ['type' => 'apcu'],
-                'class_metadata.factory.name' => $classMetadataFactoryClass,
-                'custom.functions.datetime' => [
-                    'date' => \stdClass::class,
+        $container->factory('doctrine.orm.em.options', static fn () => [
+            'cache.hydration' => ['type' => 'apcu'],
+            'cache.metadata' => ['type' => 'apcu'],
+            'cache.query' => ['type' => 'apcu'],
+            'class_metadata.factory.name' => $classMetadataFactoryClass,
+            'custom.functions.datetime' => [
+                'date' => \stdClass::class,
+            ],
+            'custom.functions.numeric' => [
+                'numeric' => \stdClass::class,
+            ],
+            'custom.functions.string' => [
+                'string' => \stdClass::class,
+            ],
+            'custom.hydration_modes' => [
+                'hydrator' => \stdClass::class,
+            ],
+            'entity.listener_resolver' => 'other',
+            'mappings' => [
+                [
+                    'type' => 'annotation',
+                    'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Annotation\Entity',
+                    'path' => __DIR__.'/../Resources/Annotation/Entity',
                 ],
-                'custom.functions.numeric' => [
-                    'numeric' => \stdClass::class,
-                ],
-                'custom.functions.string' => [
-                    'string' => \stdClass::class,
-                ],
-                'custom.hydration_modes' => [
-                    'hydrator' => \stdClass::class,
-                ],
-                'entity.listener_resolver' => 'other',
-                'mappings' => [
-                    [
-                        'type' => 'annotation',
-                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Annotation\Entity',
-                        'path' => __DIR__.'/../Resources/Annotation/Entity',
-                    ],
-                ],
-                'proxies.auto_generate' => false,
-                'proxies.dir' => sys_get_temp_dir().'/doctrine/orm/otherproxies',
-                'proxies.namespace' => 'DoctrineOtherProxy',
-                'query_hints' => [
-                    'hint' => \stdClass::class,
-                ],
-                'repository.default.class' => $repositoryClass,
-                'repository.factory' => 'other',
-                'second_level_cache' => ['type' => 'apcu'],
-                'second_level_cache.enabled' => true,
-                'strategy.naming' => 'other',
-                'strategy.quote' => 'other',
-            ];
-        });
+            ],
+            'proxies.auto_generate' => false,
+            'proxies.dir' => sys_get_temp_dir().'/doctrine/orm/otherproxies',
+            'proxies.namespace' => 'DoctrineOtherProxy',
+            'query_hints' => [
+                'hint' => \stdClass::class,
+            ],
+            'repository.default.class' => $repositoryClass,
+            'repository.factory' => 'other',
+            'second_level_cache' => ['type' => 'apcu'],
+            'second_level_cache.enabled' => true,
+            'strategy.naming' => 'other',
+            'strategy.quote' => 'other',
+        ]);
 
         /** @var EntityManager $em */
         $em = $container->get('doctrine.orm.em');
@@ -351,111 +339,105 @@ final class DoctrineOrmServiceFactoryTest extends TestCase
         $container->factories((new DoctrineDbalServiceFactory())());
         $container->factories((new DoctrineOrmServiceFactory())());
 
-        $container->factory('logger', function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        });
+        $container->factory('logger', fn () => $this->getMockByCalls(LoggerInterface::class));
 
-        $container->factory('doctrine.dbal.dbs.options', static function () {
-            return [
-                'one' => [],
-                'two' => [],
-            ];
-        });
+        $container->factory('doctrine.dbal.dbs.options', static fn () => [
+            'one' => [],
+            'two' => [],
+        ]);
 
-        $container->factory('doctrine.orm.ems.options', static function () {
-            return [
-                'annotation' => [
-                    'connection' => 'one',
-                    'mappings' => [
-                        [
-                            'type' => 'annotation',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Annotation\Entity',
-                            'alias' => 'Entity\Annotation',
-                            'path' => __DIR__.'/../Resources/Annotation/Entity',
+        $container->factory('doctrine.orm.ems.options', static fn () => [
+            'annotation' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'annotation',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Annotation\Entity',
+                        'alias' => 'Entity\Annotation',
+                        'path' => __DIR__.'/../Resources/Annotation/Entity',
+                    ],
+                ],
+            ],
+            'classMap' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'class_map',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\ClassMap\Entity',
+                        'alias' => 'Entity\ClassMap',
+                        'map' => [
+                            ClassMap::class => ClassMapMapping::class,
                         ],
                     ],
                 ],
-                'classMap' => [
-                    'connection' => 'one',
-                    'mappings' => [
-                        [
-                            'type' => 'class_map',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\ClassMap\Entity',
-                            'alias' => 'Entity\ClassMap',
-                            'map' => [
-                                ClassMap::class => ClassMapMapping::class,
-                            ],
-                        ],
+            ],
+            'php' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'php',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Php\Entity',
+                        'alias' => 'Entity\Php',
+                        'path' => __DIR__.'/../Resources/Php/config',
                     ],
                 ],
-                'php' => [
-                    'connection' => 'one',
-                    'mappings' => [
-                        [
-                            'type' => 'php',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Php\Entity',
-                            'alias' => 'Entity\Php',
-                            'path' => __DIR__.'/../Resources/Php/config',
-                        ],
+            ],
+            'simpleYaml' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'simple_yaml',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleYaml\Entity',
+                        'alias' => 'Entity\SimpleYaml',
+                        'path' => __DIR__.'/../Resources/SimpleYaml/config',
                     ],
                 ],
-                'simpleYaml' => [
-                    'connection' => 'one',
-                    'mappings' => [
-                        [
-                            'type' => 'simple_yaml',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleYaml\Entity',
-                            'alias' => 'Entity\SimpleYaml',
-                            'path' => __DIR__.'/../Resources/SimpleYaml/config',
-                        ],
+            ],
+            'simpleXml' => [
+                'connection' => 'one',
+                'mappings' => [
+                    [
+                        'type' => 'simple_xml',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleXml\Entity',
+                        'alias' => 'Entity\SimpleXml',
+                        'path' => __DIR__.'/../Resources/SimpleXml/config',
                     ],
                 ],
-                'simpleXml' => [
-                    'connection' => 'one',
-                    'mappings' => [
-                        [
-                            'type' => 'simple_xml',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\SimpleXml\Entity',
-                            'alias' => 'Entity\SimpleXml',
-                            'path' => __DIR__.'/../Resources/SimpleXml/config',
-                        ],
+            ],
+            'staticPhp' => [
+                'connection' => 'two',
+                'mappings' => [
+                    [
+                        'type' => 'static_php',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\StaticPhp\Entity',
+                        'alias' => 'Entity\StaticPhp',
+                        'path' => __DIR__.'/../Resources/StaticPhp/Entity',
                     ],
                 ],
-                'staticPhp' => [
-                    'connection' => 'two',
-                    'mappings' => [
-                        [
-                            'type' => 'static_php',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\StaticPhp\Entity',
-                            'alias' => 'Entity\StaticPhp',
-                            'path' => __DIR__.'/../Resources/StaticPhp/Entity',
-                        ],
+            ],
+            'yaml' => [
+                'connection' => 'two',
+                'mappings' => [
+                    [
+                        'type' => 'yaml',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Yaml\Entity',
+                        'alias' => 'Entity\Yaml',
+                        'path' => __DIR__.'/../Resources/Yaml/config',
                     ],
                 ],
-                'yaml' => [
-                    'connection' => 'two',
-                    'mappings' => [
-                        [
-                            'type' => 'yaml',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Yaml\Entity',
-                            'alias' => 'Entity\Yaml',
-                            'path' => __DIR__.'/../Resources/Yaml/config',
-                        ],
+            ],
+            'xml' => [
+                'connection' => 'two',
+                'mappings' => [
+                    [
+                        'type' => 'xml',
+                        'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Xml\Entity',
+                        'alias' => 'Entity\Xml',
+                        'path' => __DIR__.'/../Resources/Xml/config',
                     ],
                 ],
-                'xml' => [
-                    'connection' => 'two',
-                    'mappings' => [
-                        [
-                            'type' => 'xml',
-                            'namespace' => 'Chubbyphp\Tests\DoctrineDbServiceProvider\Unit\Resources\Xml\Entity',
-                            'alias' => 'Entity\Xml',
-                            'path' => __DIR__.'/../Resources/Xml/config',
-                        ],
-                    ],
-                ],
-            ];
-        });
+            ],
+        ]);
 
         // start: annotation
         /** @var EntityManager $annotationEm */
