@@ -216,10 +216,13 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
+     * @template T
+     * @psalm-param string|null $persistentManagerName
+     * @psalm-param class-string<T> $persistentObject
+     * @psalm-return EntityRepository<T>|ObjectRepository<T>
+     *
      * @param string      $persistentObject
      * @param string|null $persistentManagerName
-     *
-     * @return EntityRepository|ObjectRepository
      */
     public function getRepository($persistentObject, $persistentManagerName = null): ObjectRepository
     {
@@ -227,9 +230,11 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string $class
+     * @template T
+     * @psalm-param class-string<T> $class
+     * @psalm-return EntityManagerInterface|ObjectManager|null
      *
-     * @return EntityManagerInterface|ObjectManager|null
+     * @param string $class
      */
     public function getManagerForClass($class)
     {
