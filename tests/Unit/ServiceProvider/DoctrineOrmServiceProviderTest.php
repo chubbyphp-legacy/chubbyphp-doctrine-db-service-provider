@@ -230,13 +230,13 @@ final class DoctrineOrmServiceProviderTest extends TestCase
 
         $container['logger'] = fn () => $this->getMockByCalls(LoggerInterface::class);
 
-        $container['doctrine.orm.entity.listener_resolver.other'] = fn () => new DefaultEntityListenerResolver();
+        $container['doctrine.orm.entity.listener_resolver.other'] = static fn () => new DefaultEntityListenerResolver();
 
-        $container['doctrine.orm.repository.factory.other'] = fn () => new DefaultRepositoryFactory();
+        $container['doctrine.orm.repository.factory.other'] = static fn () => new DefaultRepositoryFactory();
 
-        $container['doctrine.orm.strategy.naming.other'] = fn () => new DefaultNamingStrategy();
+        $container['doctrine.orm.strategy.naming.other'] = static fn () => new DefaultNamingStrategy();
 
-        $container['doctrine.orm.strategy.quote.other'] = fn () => new DefaultQuoteStrategy();
+        $container['doctrine.orm.strategy.quote.other'] = static fn () => new DefaultQuoteStrategy();
 
         $classMetadataFactory = new class() extends ClassMetadataFactory {
         };

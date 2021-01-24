@@ -159,7 +159,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
         ];
 
         $container['doctrine.dbal.db.cache_factory.filesystem'] = $container->protect(
-            fn (array $options) => new FilesystemCache($options['directory'])
+            static fn (array $options) => new FilesystemCache($options['directory'])
         );
 
         $directory = sys_get_temp_dir();
@@ -248,7 +248,7 @@ final class DoctrineDbalServiceProviderTest extends TestCase
             'mysql_write' => [
                 'configuration' => [
                     'cache.result' => ['type' => 'array'],
-                    'schema_assets_filter' => fn (string $assetName) => preg_match('/^.*$/', $assetName),
+                    'schema_assets_filter' => static fn (string $assetName) => preg_match('/^.*$/', $assetName),
                 ],
                 'connection' => [
                     'dbname' => 'my_database',

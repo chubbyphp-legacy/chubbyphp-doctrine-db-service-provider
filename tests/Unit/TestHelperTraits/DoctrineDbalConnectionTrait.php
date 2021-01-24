@@ -58,7 +58,7 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('createQueryBuilder')
-            ->willReturnCallback(function () use (&$queryBuilderStack, &$queryBuilderCounter) {
+            ->willReturnCallback(static function () use (&$queryBuilderStack, &$queryBuilderCounter) {
                 ++$queryBuilderCounter;
 
                 $queryBuilder = array_shift($queryBuilderStack);
@@ -90,7 +90,7 @@ trait DoctrineDbalConnectionTrait
             ->expects(self::any())
             ->method('insert')
             ->willReturnCallback(
-                function (
+                static function (
                     $tableExpression,
                     array $data,
                     array $types = []
@@ -121,7 +121,7 @@ trait DoctrineDbalConnectionTrait
             ->expects(self::any())
             ->method('update')
             ->willReturnCallback(
-                function (
+                static function (
                     $tableExpression,
                     array $data,
                     array $identifier,
@@ -154,7 +154,7 @@ trait DoctrineDbalConnectionTrait
             ->expects(self::any())
             ->method('delete')
             ->willReturnCallback(
-                function (
+                static function (
                     $tableExpression,
                     array $identifier,
                     array $types = []
@@ -184,7 +184,7 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('fetchAll')
-            ->willReturnCallback(function ($sql, array $params = [], $types = []) use (&$fetchAllStack, &$fetchAllCounter) {
+            ->willReturnCallback(static function ($sql, array $params = [], $types = []) use (&$fetchAllStack, &$fetchAllCounter) {
                 ++$fetchAllCounter;
 
                 $fetchAll = array_shift($fetchAllStack);
@@ -209,7 +209,7 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('executeUpdate')
-            ->willReturnCallback(function ($sql, array $params = [], $types = []) use (&$executeUpdateStack, &$executeUpdateCounter) {
+            ->willReturnCallback(static function ($sql, array $params = [], $types = []) use (&$executeUpdateStack, &$executeUpdateCounter) {
                 ++$executeUpdateCounter;
 
                 $executeUpdate = array_shift($executeUpdateStack);
@@ -234,7 +234,7 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('exec')
-            ->willReturnCallback(function ($sql) use (&$execStack, &$execCounter) {
+            ->willReturnCallback(static function ($sql) use (&$execStack, &$execCounter) {
                 ++$execCounter;
 
                 $exec = array_shift($execStack);
@@ -255,19 +255,19 @@ trait DoctrineDbalConnectionTrait
         $connection
             ->expects(self::any())
             ->method('getSchemaManager')
-            ->willReturnCallback(fn () => $schemaManager)
+            ->willReturnCallback(static fn () => $schemaManager)
         ;
 
         $connection
             ->expects(self::any())
             ->method('getDatabasePlatform')
-            ->willReturnCallback(fn () => $databasePlatform)
+            ->willReturnCallback(static fn () => $databasePlatform)
         ;
 
         $connection
             ->expects(self::any())
             ->method('getParams')
-            ->willReturnCallback(fn () => $params)
+            ->willReturnCallback(static fn () => $params)
         ;
 
         return $connection;
@@ -321,7 +321,7 @@ trait DoctrineDbalConnectionTrait
             $queryBuilder
                 ->expects(self::any())
                 ->method($modifier)
-                ->willReturnCallback(function () use ($queryBuilder, $modifier) {
+                ->willReturnCallback(static function () use ($queryBuilder, $modifier) {
                     if (!isset($queryBuilder->__calls[$modifier])) {
                         $queryBuilder->__calls[$modifier] = [];
                     }
@@ -344,7 +344,7 @@ trait DoctrineDbalConnectionTrait
         $queryBuilder
             ->expects(self::any())
             ->method('execute')
-            ->willReturnCallback(function () use (&$executeStack, &$executeStackCounter) {
+            ->willReturnCallback(static function () use (&$executeStack, &$executeStackCounter) {
                 ++$executeStackCounter;
 
                 $execute = array_shift($executeStack);
@@ -396,7 +396,7 @@ trait DoctrineDbalConnectionTrait
             $expr
                 ->expects(self::any())
                 ->method($comparsion)
-                ->willReturnCallback(fn () => ['method' => $comparsion, 'arguments' => func_get_args()])
+                ->willReturnCallback(static fn () => ['method' => $comparsion, 'arguments' => func_get_args()])
             ;
         }
 
@@ -418,7 +418,7 @@ trait DoctrineDbalConnectionTrait
         $stmt
             ->expects(self::any())
             ->method('fetch')
-            ->willReturnCallback(function (int $type) use ($checkType, $data) {
+            ->willReturnCallback(static function (int $type) use ($checkType, $data) {
                 self::assertSame($checkType, $type);
 
                 return $data;
@@ -428,7 +428,7 @@ trait DoctrineDbalConnectionTrait
         $stmt
             ->expects(self::any())
             ->method('fetchAll')
-            ->willReturnCallback(function (int $type) use ($checkType, $data) {
+            ->willReturnCallback(static function (int $type) use ($checkType, $data) {
                 self::assertSame($checkType, $type);
 
                 return $data;
@@ -457,7 +457,7 @@ trait DoctrineDbalConnectionTrait
         $schemaManager
             ->expects(self::any())
             ->method('createSchema')
-            ->willReturnCallback(function () use (&$createSchemaStack, &$createSchemaStackCounter) {
+            ->willReturnCallback(static function () use (&$createSchemaStack, &$createSchemaStackCounter) {
                 ++$createSchemaStackCounter;
 
                 $createSchema = array_shift($createSchemaStack);
@@ -478,7 +478,7 @@ trait DoctrineDbalConnectionTrait
         $schemaManager
             ->expects(self::any())
             ->method('createDatabase')
-            ->willReturnCallback(function (string $database) use (&$createDatabaseStack, &$createDatabaseStackCounter): void {
+            ->willReturnCallback(static function (string $database) use (&$createDatabaseStack, &$createDatabaseStackCounter): void {
                 ++$createDatabaseStackCounter;
 
                 $createDatabase = array_shift($createDatabaseStack);
@@ -501,7 +501,7 @@ trait DoctrineDbalConnectionTrait
         $schemaManager
             ->expects(self::any())
             ->method('listDatabases')
-            ->willReturnCallback(fn () => $listDatabases)
+            ->willReturnCallback(static fn () => $listDatabases)
         ;
 
         return $schemaManager;
@@ -527,7 +527,7 @@ trait DoctrineDbalConnectionTrait
         $schema
             ->expects(self::any())
             ->method('getMigrateToSql')
-            ->willReturnCallback(function (Schema $toSchema, AbstractPlatform $platform) use (&$migrateToSqlStack, &$migrateToSqlStackCounter) {
+            ->willReturnCallback(static function (Schema $toSchema, AbstractPlatform $platform) use (&$migrateToSqlStack, &$migrateToSqlStackCounter) {
                 ++$migrateToSqlStackCounter;
 
                 $migrateToSql = array_shift($migrateToSqlStack);
@@ -562,7 +562,7 @@ trait DoctrineDbalConnectionTrait
         $platform
             ->expects(self::any())
             ->method('quoteSingleIdentifier')
-            ->willReturnCallback(fn ($str) => $str)
+            ->willReturnCallback(static fn ($str) => $str)
         ;
 
         return $platform;

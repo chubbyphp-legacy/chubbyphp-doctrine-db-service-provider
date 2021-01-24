@@ -145,13 +145,9 @@ final class DoctrineDbalServiceFactoryTest extends TestCase
         $container = new Container();
         $container->factories((new DoctrineDbalServiceFactory())());
 
-        $container->factory('logger', function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        });
+        $container->factory('logger', fn () => $this->getMockByCalls(LoggerInterface::class));
 
-        $container->factory('listener1', static function () {
-            return new \stdClass();
-        });
+        $container->factory('listener1', static fn () => new \stdClass());
 
         $container->factory('subscriber1', function () {
             return $this->getMockByCalls(EventSubscriber::class, [
@@ -166,11 +162,7 @@ final class DoctrineDbalServiceFactoryTest extends TestCase
             ];
         });
 
-        $container->factory('doctrine.dbal.db.cache_factory.filesystem', static function () {
-            return function (array $options) {
-                return new FilesystemCache($options['directory']);
-            };
-        });
+        $container->factory('doctrine.dbal.db.cache_factory.filesystem', static fn () => static fn (array $options) => new FilesystemCache($options['directory']));
 
         $directory = sys_get_temp_dir();
 
@@ -239,9 +231,7 @@ final class DoctrineDbalServiceFactoryTest extends TestCase
         $container = new Container();
         $container->factories((new DoctrineDbalServiceFactory())());
 
-        $container->factory('logger', function () {
-            return $this->getMockByCalls(LoggerInterface::class);
-        });
+        $container->factory('logger', fn () => $this->getMockByCalls(LoggerInterface::class));
 
         $container->factory('doctrine.dbal.dbs.options', static function () {
             return [
@@ -261,7 +251,7 @@ final class DoctrineDbalServiceFactoryTest extends TestCase
                 'mysql_write' => [
                     'configuration' => [
                         'cache.result' => ['type' => 'array'],
-                        'schema_assets_filter' => function (string $assetName) { return preg_match('/^.*$/', $assetName); },
+                        'schema_assets_filter' => static fn (string $assetName) => preg_match('/^.*$/', $assetName),
                     ],
                     'connection' => [
                         'dbname' => 'my_database',
