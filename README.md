@@ -1,8 +1,8 @@
 # chubbyphp-doctrine-db-service-provider
 
-[![Build Status](https://api.travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider.png?branch=master)](https://travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider)
+[![CI](https://github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/workflows/CI/badge.svg?branch=master)](https://github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-doctrine-db-service-provider/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-doctrine-db-service-provider?branch=master)
-[![Infection MSI](https://badge.stryker-mutator.io/github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/master)](https://travis-ci.org/chubbyphp/chubbyphp-doctrine-db-service-provider)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/master)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyphp/chubbyphp-doctrine-db-service-provider/master)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-doctrine-db-service-provider/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-doctrine-db-service-provider)

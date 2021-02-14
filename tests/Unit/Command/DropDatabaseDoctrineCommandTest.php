@@ -136,33 +136,23 @@ EOT;
         $command->run($input, $output);
     }
 
-    public function testExecuteMysqlWithName(): void
+    public function testExecutepgsqlWithName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
         $setupConnection = DriverManager::getConnection([
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'password' => 'root',
-            'port' => 3306,
-            'user' => 'root',
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
         ]);
 
-        $setupConnection->getSchemaManager()->createDatabase('`'.$dbName.'`');
+        $setupConnection->getSchemaManager()->createDatabase('"'.$dbName.'"');
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('close'),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -182,28 +172,20 @@ EOT;
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
-            str_replace('dbname', $dbName, 'Dropped database `dbname` for connection named sample.'.PHP_EOL),
+            str_replace('dbname', $dbName, 'Dropped database "dbname" for connection named sample.'.PHP_EOL),
             $output->fetch()
         );
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabaseIfExists(): void
+    public function testExecutepgsqlWithNameAndMissingDatabaseIfExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('close'),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -227,29 +209,21 @@ EOT;
             str_replace(
                 'dbname',
                 $dbName,
-                'Database `dbname` for connection named sample doesn\'t exist. Skipped.'.PHP_EOL
+                'Database "dbname" for connection named sample doesn\'t exist. Skipped.'.PHP_EOL
             ),
             $output->fetch()
         );
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabase(): void
+    public function testExecutepgsqlWithNameAndMissingDatabase(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('close'),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -269,13 +243,10 @@ EOT;
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not drop database `dbname` for connection named sample.
-An exception occurred while executing 'DROP DATABASE `dbname`':
-
-SQLSTATE[HY000]: General error: 1008 Can't drop database 'dbname'; database doesn't exist
-
+Could not drop database "dbname" for connection named sample.
+An exception occurred while executing 'DROP DATABASE "dbname"':
 EOT;
 
-        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
+        self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 }

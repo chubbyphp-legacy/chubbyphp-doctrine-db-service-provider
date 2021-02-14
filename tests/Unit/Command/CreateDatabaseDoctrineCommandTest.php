@@ -8,6 +8,7 @@ use Chubbyphp\DoctrineDbServiceProvider\Command\CreateDatabaseDoctrineCommand;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\Persistence\ConnectionRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -85,22 +86,15 @@ final class CreateDatabaseDoctrineCommandTest extends TestCase
         $command->run($input, $output);
     }
 
-    public function testExecuteMysqlWithName(): void
+    public function testExecutepgsqlWithName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -119,37 +113,20 @@ final class CreateDatabaseDoctrineCommandTest extends TestCase
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
-            str_replace('dbname', $dbName, 'Created database `dbname` for connection named sample.'.PHP_EOL),
+            str_replace('dbname', $dbName, 'Created database "dbname" for connection named sample.'.PHP_EOL),
             $output->fetch()
         );
     }
 
-    public function testExecuteMysqlWithNameDbExists(): void
+    public function testExecutepgsqlWithNameDbExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -170,42 +147,22 @@ final class CreateDatabaseDoctrineCommandTest extends TestCase
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not create database `dbname`.
-An exception occurred while executing 'CREATE DATABASE `dbname`':
-
-SQLSTATE[HY000]: General error: 1007 Can't create database 'dbname'; database exists
-
+Could not create database "dbname".
+An exception occurred while executing 'CREATE DATABASE "dbname"':
 EOT;
 
-        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
+        self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 
-    public function testExecuteMysqlWithNameDbExistsAndIfNotExistsTrue(): void
+    public function testExecutepgsqlWithNameDbExistsAndIfNotExistsTrue(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'dbname' => $dbName,
-                    'driver' => 'pdo_mysql',
-                    'host' => 'localhost',
-                    'password' => 'root',
-                    'port' => 3306,
-                    'user' => 'root',
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'url' => getenv('POSTGRES_URL')
+                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+            'dbname' => $dbName,
         ]);
 
         /** @var ConnectionRegistry|MockObject $connectionRegistry */
@@ -230,7 +187,7 @@ EOT;
             str_replace(
                 'dbname',
                 $dbName,
-                'Database `dbname` for connection named sample already exists. Skipped.'.PHP_EOL
+                'Database "dbname" for connection named sample already exists. Skipped.'.PHP_EOL
             ),
             $output->fetch()
         );
