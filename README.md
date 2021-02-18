@@ -57,7 +57,7 @@ composer require chubbyphp/chubbyphp-doctrine-db-service-provider "^2.1"
 
 ## Copyright
 
-Dominik Zogg 2020
+Dominik Zogg 2021
 
 *There is some code with @see, copied with small modifications by from thirdparties.*
 
