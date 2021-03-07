@@ -17,7 +17,7 @@
         "doctrine/persistence": "^2.0"
     },
     "require-dev": {
-        "chubbyphp/chubbyphp-container": "^1.0",
+        "chubbyphp/chubbyphp-container": "^1.0|^2.0",
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
         "chubbyphp/chubbyphp-mock": "^1.6",
         "doctrine/orm": "^2.7.3",
