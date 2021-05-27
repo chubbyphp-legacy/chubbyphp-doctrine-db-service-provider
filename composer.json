@@ -11,16 +11,16 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "doctrine/cache": "^1.6",
-        "doctrine/common": "^3.0",
-        "doctrine/dbal": "^2.10.3",
-        "doctrine/persistence": "^2.0"
+        "doctrine/cache": "^1.11.3",
+        "doctrine/common": "^3.1.2",
+        "doctrine/dbal": "^2.11.3",
+        "doctrine/persistence": "^2.2.1"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-container": "^1.0|^2.0",
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
         "chubbyphp/chubbyphp-mock": "^1.6",
-        "doctrine/orm": "^2.7.3",
+        "doctrine/orm": "^2.9.1",
         "infection/infection": "^0.20.2",
         "php-coveralls/php-coveralls": "^2.4.3",
         "phploc/phploc": "^7.0.2",

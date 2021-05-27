@@ -42,11 +42,10 @@ final class DoctrineOrmCommandTraitTest extends TestCase
             Call::create('getManager')->with('test')->willReturn($entityManager),
         ]);
 
-        $command = new class($managerRegistry, 'test') extends BaseCommand {
+        $command = new class($managerRegistry) extends BaseCommand {
             use DoctrineOrmCommandTrait;
         };
 
-        self::assertSame('test', $command->getName());
         self::assertSame('some description', $command->getDescription());
 
         self::assertSame(0, $command->run($input, $output));

@@ -4,5 +4,8 @@ parameters:
             message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Driver\\ClassMapMappingInterface\:\:configureMapping\(\) has no return typehint specified\./'
             path: %currentWorkingDirectory%/src/Driver/ClassMapMappingInterface.php
         -
+            message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Driver\\ClassMapMappingInterface\:\:configureMapping\(\) has parameter \$metadata with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T/'
+            path: %currentWorkingDirectory%/src/Driver/ClassMapMappingInterface.php
+        -
             message: '/PHPDoc tag @var for variable \$reflectionParentClass contains generic class ReflectionClass but does not specify its types\: T/'
             path: %currentWorkingDirectory%/*

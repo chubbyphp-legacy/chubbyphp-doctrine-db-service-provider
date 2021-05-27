@@ -362,6 +362,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
+            Call::create('getMetadataCache')->with()->willReturn(null),
             Call::create('getMetadataCacheImpl')->with()->willReturn(null),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
             Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
@@ -422,6 +423,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
+            Call::create('getMetadataCache')->with()->willReturn(null),
             Call::create('getMetadataCacheImpl')->with()->willReturn(null),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
             Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),

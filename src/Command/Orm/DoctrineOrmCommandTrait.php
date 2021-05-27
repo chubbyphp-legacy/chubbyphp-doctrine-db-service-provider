@@ -16,9 +16,9 @@ trait DoctrineOrmCommandTrait
 {
     private ManagerRegistry $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry, ?string $name = null)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($name);
+        parent::__construct();
 
         $this->managerRegistry = $managerRegistry;
     }
@@ -27,12 +27,14 @@ trait DoctrineOrmCommandTrait
     {
         parent::configure();
 
-        $this->addOption(
-            'em',
-            null,
-            InputOption::VALUE_OPTIONAL,
-            'The entity manager to use for this command'
-        );
+        if (!$this->getDefinition()->hasOption('em')) {
+            $this->addOption(
+                'em',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The entity manager to use for this command'
+            );
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int

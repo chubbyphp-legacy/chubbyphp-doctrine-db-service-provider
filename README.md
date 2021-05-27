@@ -26,14 +26,14 @@ Doctrine database service providers for doctrine dbal and orm.
 ## Requirements
 
  * php: ^7.4|^8.0
- * doctrine/cache: ^1.6
- * doctrine/common: ^3.0
- * doctrine/dbal: ^2.9
- * doctrine/persistence: ^2.0
+ * doctrine/cache: ^1.11.3
+ * doctrine/common: ^3.1.2
+ * doctrine/dbal: ^2.11.3
+ * doctrine/persistence: ^2.2.1
 
 ## Suggest
 
- * doctrine/orm: ^2.7.3
+ * doctrine/orm: ^2.9.1
 
 ## Installation
 
