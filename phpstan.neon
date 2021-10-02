@@ -9,3 +9,9 @@ parameters:
         -
             message: '/PHPDoc tag @var for variable \$reflectionParentClass contains generic class ReflectionClass but does not specify its types\: T/'
             path: %currentWorkingDirectory%/*
+        -
+            message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Registry\\DoctrineOrmManagerRegistry\:\:getManagerForClass\(\) should return Doctrine\\Persistence\\ObjectManager\|null but return statement is missing\./'
+            path: %currentWorkingDirectory%/src/Registry/DoctrineOrmManagerRegistry.php
+        -
+            message: '/Method Chubbyphp\\DoctrineDbServiceProvider\\Registry\\Psr\\DoctrineOrmManagerRegistry\:\:getManagerForClass\(\) should return Doctrine\\Persistence\\ObjectManager\|null but return statement is missing\./'
+            path: %currentWorkingDirectory%/src/Registry/Psr/DoctrineOrmManagerRegistry.php

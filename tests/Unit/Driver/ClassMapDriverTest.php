@@ -25,9 +25,9 @@ final class ClassMapDriverTest extends TestCase
     public function testLoadMetadataForClass(): void
     {
         $object = $this->getObject();
-        $class = get_class($object);
+        $class = \get_class($object);
         $mappingObject = $this->getMappingObject();
-        $mappingClass = get_class($mappingObject);
+        $mappingClass = \get_class($mappingObject);
 
         /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->getMockByCalls(ClassMetadata::class, [
@@ -47,7 +47,7 @@ final class ClassMapDriverTest extends TestCase
         );
 
         $object = $this->getObject();
-        $class = get_class($object);
+        $class = \get_class($object);
 
         /** @var ClassMetadataInterface $classMetadata */
         $classMetadata = $this->getMockByCalls(ClassMetadataInterface::class);
@@ -77,7 +77,7 @@ final class ClassMapDriverTest extends TestCase
         );
 
         $object = $this->getObject();
-        $class = get_class($object);
+        $class = \get_class($object);
 
         /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->getMockByCalls(ClassMetadata::class);
@@ -90,9 +90,9 @@ final class ClassMapDriverTest extends TestCase
     public function testGetAllClassNames(): void
     {
         $object = $this->getObject();
-        $class = get_class($object);
+        $class = \get_class($object);
         $mappingObject = $this->getMappingObject();
-        $mappingClass = get_class($mappingObject);
+        $mappingClass = \get_class($mappingObject);
 
         $classMapDriver = new ClassMapDriver([$class => $mappingClass]);
 
@@ -102,9 +102,9 @@ final class ClassMapDriverTest extends TestCase
     public function testIsTransient(): void
     {
         $object = $this->getObject();
-        $class = get_class($object);
+        $class = \get_class($object);
         $mappingObject = $this->getMappingObject();
-        $mappingClass = get_class($mappingObject);
+        $mappingClass = \get_class($mappingObject);
 
         $classMapDriver = new ClassMapDriver([$class => $mappingClass]);
 
@@ -112,19 +112,13 @@ final class ClassMapDriverTest extends TestCase
         self::assertTrue($classMapDriver->isTransient(\stdClass::class));
     }
 
-    /**
-     * @return object
-     */
-    private function getObject()
+    private function getObject(): object
     {
         return new class() {
         };
     }
 
-    /**
-     * @return object
-     */
-    private function getMappingObject()
+    private function getMappingObject(): object
     {
         return new class() implements ClassMapMappingInterface {
             /**

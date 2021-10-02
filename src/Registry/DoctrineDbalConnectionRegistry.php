@@ -15,7 +15,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     private ?Container $connections = null;
 
     /**
-     * @var array<int, string>|null
+     * @var null|array<int, string>
      */
     private ?array $connectionNames = null;
 
@@ -34,7 +34,7 @@ final class DoctrineDbalConnectionRegistry implements ConnectionRegistry
     }
 
     /**
-     * @param string|null $name
+     * @param null|string $name
      *
      * @throws \InvalidArgumentException
      */

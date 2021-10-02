@@ -21,7 +21,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     private ?ContainerInterface $connections = null;
 
     /**
-     * @var array<int, string>|null
+     * @var null|array<int, string>
      */
     private ?array $connectionNames = null;
 
@@ -35,7 +35,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     private array $resetedManagers = [];
 
     /**
-     * @var array<int, string>|null
+     * @var null|array<int, string>
      */
     private ?array $managerNames = null;
 
@@ -54,7 +54,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string|null $name
+     * @param null|string $name
      *
      * @throws \InvalidArgumentException
      */
@@ -107,7 +107,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string|null $name
+     * @param null|string $name
      *
      * @return EntityManagerInterface|ObjectManager
      */
@@ -138,7 +138,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
         $entityManagers = [];
         /** @var string $name */
         foreach ($this->managerNames as $name) {
-            /** @var EntityManagerInterface $entityManager */
+            // @var EntityManagerInterface $entityManager
             if (isset($this->resetedManagers[$name])) {
                 $entityManager = $this->resetedManagers[$name];
             } else {
@@ -162,7 +162,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
     }
 
     /**
-     * @param string|null $name
+     * @param null|string $name
      *
      * @return EntityManagerInterface|ObjectManager
      */
@@ -222,7 +222,7 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
      * @psalm-return EntityRepository<T>|ObjectRepository<T>
      *
      * @param string      $persistentObject
-     * @param string|null $persistentManagerName
+     * @param null|string $persistentManagerName
      */
     public function getRepository($persistentObject, $persistentManagerName = null): ObjectRepository
     {
@@ -235,6 +235,8 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
      * @psalm-return EntityManagerInterface|ObjectManager|null
      *
      * @param string $class
+     *
+     * @return null|EntityManagerInterface|ObjectManager
      */
     public function getManagerForClass($class)
     {
@@ -251,8 +253,6 @@ final class DoctrineOrmManagerRegistry implements ManagerRegistry
                 return $entityManager;
             }
         }
-
-        return null;
     }
 
     private function loadConnections(): void

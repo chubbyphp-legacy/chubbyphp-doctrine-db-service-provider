@@ -39,7 +39,7 @@ trait DoctrineOrmCommandTrait
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        /** @var string|null $name */
+        /** @var null|string $name */
         $name = $input->getOption('em');
 
         /** @var EntityManagerInterface $entityManager */

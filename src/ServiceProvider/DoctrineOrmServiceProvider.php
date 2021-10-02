@@ -86,7 +86,7 @@ final class DoctrineOrmServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * @return array<string, array|string|float|int|bool>
+     * @return array<string, array|bool|float|int|string>
      */
     private function getOrmEmDefaultOptions(): array
     {

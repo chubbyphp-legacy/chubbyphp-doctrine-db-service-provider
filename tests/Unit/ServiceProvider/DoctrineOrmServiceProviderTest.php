@@ -241,7 +241,7 @@ final class DoctrineOrmServiceProviderTest extends TestCase
         $classMetadataFactory = new class() extends ClassMetadataFactory {
         };
 
-        $classMetadataFactoryClass = get_class($classMetadataFactory);
+        $classMetadataFactoryClass = \get_class($classMetadataFactory);
 
         $repository = new class() extends EntityRepository {
             public function __construct()
@@ -249,7 +249,7 @@ final class DoctrineOrmServiceProviderTest extends TestCase
             }
         };
 
-        $repositoryClass = get_class($repository);
+        $repositoryClass = \get_class($repository);
 
         $container['doctrine.orm.em.options'] = [
             'cache.hydration' => ['type' => 'apcu'],

@@ -33,7 +33,7 @@ class ClassMapDriver implements MappingDriver
     {
         if (false === $metadata instanceof ClassMetadata) {
             throw new MappingException(
-                sprintf('Metadata is of class "%s" instead of "%s"', get_class($metadata), ClassMetadata::class)
+                sprintf('Metadata is of class "%s" instead of "%s"', \get_class($metadata), ClassMetadata::class)
             );
         }
 
@@ -67,10 +67,6 @@ class ClassMapDriver implements MappingDriver
      */
     public function isTransient($className): bool
     {
-        if (isset($this->classMap[$className])) {
-            return false;
-        }
-
-        return true;
+        return !(isset($this->classMap[$className]));
     }
 }

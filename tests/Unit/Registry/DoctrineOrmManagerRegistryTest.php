@@ -352,7 +352,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
-        /** @var RepositoryFactory|MockObject $repositoryFactory */
+        /** @var MockObject|RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
 
         /** @var EntityListenerResolver|MockObject $entityListenerResolver */
@@ -413,7 +413,7 @@ final class DoctrineOrmManagerRegistryTest extends TestCase
             Call::create('getEventManager')->with()->willReturn($eventManager),
         ]);
 
-        /** @var RepositoryFactory|MockObject $repositoryFactory */
+        /** @var MockObject|RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
 
         /** @var EntityListenerResolver|MockObject $entityListenerResolver */
@@ -632,10 +632,7 @@ final class SampleProxy extends Sample implements Proxy
     {
     }
 
-    /**
-     * @return bool
-     */
-    public function __isInitialized()
+    public function __isInitialized(): bool
     {
         return false;
     }

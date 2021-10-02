@@ -27,7 +27,7 @@ final class DoctrineDbalLogger implements SQLLogger
      */
     public function startQuery($sql, ?array $params = null, ?array $types = null): void
     {
-        if (is_array($params)) {
+        if (\is_array($params)) {
             $params = $this->escapeParams($params);
         }
 
@@ -48,18 +48,20 @@ final class DoctrineDbalLogger implements SQLLogger
     private function escapeParams(array $params): array
     {
         foreach ($params as $index => $param) {
-            if (!is_string($param)) {
+            if (!\is_string($param)) {
                 continue;
             }
 
             // non utf-8 strings break json encoding
             if (!preg_match('//u', $param)) {
                 $params[$index] = self::BINARY_DATA_VALUE;
+
                 continue;
             }
 
             if (self::MAX_STRING_LENGTH < mb_strlen($param, 'UTF-8')) {
                 $params[$index] = mb_substr($param, 0, self::MAX_STRING_LENGTH - 6, 'UTF-8').' [...]';
+
                 continue;
             }
         }

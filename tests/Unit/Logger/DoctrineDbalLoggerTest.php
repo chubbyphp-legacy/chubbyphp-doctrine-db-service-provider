@@ -42,10 +42,10 @@ final class DoctrineDbalLoggerTest extends TestCase
             'select * from users where username = :username',
             [
                 'active' => true,
-                'picture' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='),
+                'picture' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=', true),
                 'username' => 'jöhn.doé+66666666666666@gmail.com',
                 'alias' => 'jöhn.doé+6666666666666@gmail.com',
-                'document' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs='),
+                'document' => base64_decode('R0lGODdhAQABAIAAAP///////ywAAAAAAQABAAACAkQBADs=', true),
             ]
         );
     }

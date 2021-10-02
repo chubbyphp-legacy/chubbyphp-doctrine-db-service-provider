@@ -63,7 +63,8 @@ trait DoctrineDbalConnectionTrait
 
                 $queryBuilder = array_shift($queryBuilderStack);
 
-                self::assertNotNull($queryBuilder,
+                self::assertNotNull(
+                    $queryBuilder,
                     sprintf(
                         'createQueryBuilder failed, cause there was no data within $queryBuilderStack at call %d',
                         $queryBuilderCounter
@@ -99,7 +100,8 @@ trait DoctrineDbalConnectionTrait
 
                     $insert = array_shift($insertStack);
 
-                    self::assertNotNull($insert,
+                    self::assertNotNull(
+                        $insert,
                         sprintf(
                             'insert failed, cause there was no data within $insertStack at call %d',
                             $insertStackCounter
@@ -131,7 +133,8 @@ trait DoctrineDbalConnectionTrait
 
                     $update = array_shift($updateStack);
 
-                    self::assertNotNull($update,
+                    self::assertNotNull(
+                        $update,
                         sprintf(
                             'update failed, cause there was no data within $updateStack at call %d',
                             $updateStackCounter
@@ -163,7 +166,8 @@ trait DoctrineDbalConnectionTrait
 
                     $delete = array_shift($deleteStack);
 
-                    self::assertNotNull($delete,
+                    self::assertNotNull(
+                        $delete,
                         sprintf(
                             'delete failed, cause there was no data within $deleteStack at call %d',
                             $deleteStackCounter
@@ -189,7 +193,8 @@ trait DoctrineDbalConnectionTrait
 
                 $fetchAll = array_shift($fetchAllStack);
 
-                self::assertNotNull($fetchAll,
+                self::assertNotNull(
+                    $fetchAll,
                     sprintf(
                         'fetchAll failed, cause there was no data within $fetchAllStack at call %d',
                         $fetchAllCounter
@@ -214,7 +219,8 @@ trait DoctrineDbalConnectionTrait
 
                 $executeUpdate = array_shift($executeUpdateStack);
 
-                self::assertNotNull($executeUpdate,
+                self::assertNotNull(
+                    $executeUpdate,
                     sprintf(
                         'executeUpdate failed, cause there was no data within $executeUpdateStack at call %d',
                         $executeUpdateCounter
@@ -239,7 +245,8 @@ trait DoctrineDbalConnectionTrait
 
                 $exec = array_shift($execStack);
 
-                self::assertNotNull($exec,
+                self::assertNotNull(
+                    $exec,
                     sprintf(
                         'exec failed, cause there was no data within $execStack at call %d',
                         $execCounter
@@ -307,7 +314,7 @@ trait DoctrineDbalConnectionTrait
             'resetQueryPart',
         ];
 
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder $queryBuilder */
         $queryBuilder = $this
             ->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
@@ -326,7 +333,7 @@ trait DoctrineDbalConnectionTrait
                         $queryBuilder->__calls[$modifier] = [];
                     }
 
-                    $queryBuilder->__calls[$modifier][] = func_get_args();
+                    $queryBuilder->__calls[$modifier][] = \func_get_args();
 
                     return $queryBuilder;
                 })
@@ -349,7 +356,8 @@ trait DoctrineDbalConnectionTrait
 
                 $execute = array_shift($executeStack);
 
-                self::assertNotNull($execute,
+                self::assertNotNull(
+                    $execute,
                     sprintf(
                         'execute failed, cause there was no data within $executeStack at call %d',
                         $executeStackCounter
@@ -396,7 +404,7 @@ trait DoctrineDbalConnectionTrait
             $expr
                 ->expects(self::any())
                 ->method($comparsion)
-                ->willReturnCallback(static fn () => ['method' => $comparsion, 'arguments' => func_get_args()])
+                ->willReturnCallback(static fn () => ['method' => $comparsion, 'arguments' => \func_get_args()])
             ;
         }
 
@@ -408,7 +416,7 @@ trait DoctrineDbalConnectionTrait
      */
     private function getStatement(int $checkType, $data): Statement
     {
-        /** @var Statement|\PHPUnit_Framework_MockObject_MockObject $stmt */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Statement $stmt */
         $stmt = $this
             ->getMockBuilder(Statement::class)
             ->setMethods(['fetch', 'fetchAll'])
@@ -462,7 +470,8 @@ trait DoctrineDbalConnectionTrait
 
                 $createSchema = array_shift($createSchemaStack);
 
-                self::assertNotNull($createSchema,
+                self::assertNotNull(
+                    $createSchema,
                     sprintf(
                         'execute failed, cause there was no data within $createSchemaStack at call %d',
                         $createSchemaStackCounter
@@ -483,7 +492,8 @@ trait DoctrineDbalConnectionTrait
 
                 $createDatabase = array_shift($createDatabaseStack);
 
-                self::assertNotNull($createDatabase,
+                self::assertNotNull(
+                    $createDatabase,
                     sprintf(
                         'execute failed, cause there was no data within $createDatabaseStack at call %d',
                         $createDatabaseStackCounter
@@ -512,7 +522,7 @@ trait DoctrineDbalConnectionTrait
      */
     private function getSchema(array $stacks): Schema
     {
-        /** @var Schema|\PHPUnit_Framework_MockObject_MockObject $schema */
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Schema $schema */
         $schema = $this
             ->getMockBuilder(Schema::class)
             ->disableOriginalConstructor()
@@ -532,7 +542,8 @@ trait DoctrineDbalConnectionTrait
 
                 $migrateToSql = array_shift($migrateToSqlStack);
 
-                self::assertNotNull($migrateToSql,
+                self::assertNotNull(
+                    $migrateToSql,
                     sprintf(
                         'execute failed, cause there was no data within $migrateToSqlStack at call %d',
                         $migrateToSqlStackCounter

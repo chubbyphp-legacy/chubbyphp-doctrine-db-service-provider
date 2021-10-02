@@ -42,19 +42,20 @@ final class DropDatabaseDoctrineCommand extends Command
                 'Don\'t trigger an error, when the database doesn\'t exist'
             )
             ->addOption('force', null, InputOption::VALUE_NONE, 'Set this parameter to execute this action')
-            ->setHelp(<<<'EOT'
-The <info>%command.name%</info> command drops the default connections database:
+            ->setHelp(
+                <<<'EOT'
+                    The <info>%command.name%</info> command drops the default connections database:
 
-    <info>php %command.full_name%</info>
+                        <info>php %command.full_name%</info>
 
-The <info>--force</info> parameter has to be used to actually drop the database.
+                    The <info>--force</info> parameter has to be used to actually drop the database.
 
-You can also optionally specify the name of a connection to drop the database for:
+                    You can also optionally specify the name of a connection to drop the database for:
 
-    <info>php %command.full_name% --connection=default</info>
+                        <info>php %command.full_name% --connection=default</info>
 
-<error>Be careful: All data in a given database will be lost when executing this command.</error>
-EOT
+                    <error>Be careful: All data in a given database will be lost when executing this command.</error>
+                    EOT
             )
         ;
     }
@@ -85,7 +86,7 @@ EOT
 
         $connection->close();
         $connection = DriverManager::getConnection($params);
-        $shouldDropDatabase = !$ifExists || in_array($dbName, $connection->getSchemaManager()->listDatabases());
+        $shouldDropDatabase = !$ifExists || \in_array($dbName, $connection->getSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {
@@ -97,7 +98,7 @@ EOT
 
     private function getConnectionName(InputInterface $input): string
     {
-        /** @var string|null $connectionName */
+        /** @var null|string $connectionName */
         $connectionName = $input->getOption('connection');
 
         if (null !== $connectionName) {
